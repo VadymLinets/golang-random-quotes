@@ -2,6 +2,11 @@ run:
   concurrency: 6
 
 issues:
+  exclude-rules:
+    - linters:
+        - gosec
+      text: "math/rand instead of crypto/rand"
+      path: internal/quote/service.go
   exclude-dirs:
     - .idea
     - .git
@@ -13,57 +18,31 @@ issues:
 linters:
   enable-all: true
   disable:
-    - exhaustive
-    - structcheck
-    - paralleltest
-    - gofumpt
-    - stylecheck
-    - tagalign
     - containedctx
     - cyclop
-    - deadcode
-    - decorder
     - depguard
-    - gci
-    - dogsled
-    - dupword
     - execinquery
-    - exhaustivestruct
     - exhaustruct
-    - forbidigo
-    - forcetypeassert
     - funlen
+    - gci
     - gochecknoglobals
     - gochecknoinits
     - gocognit
     - gocyclo
     - godox
-    - gosec
-    - golint
+    - gofumpt
+    - goimports
+    - gomnd
     - gomodguard
     - goprintffuncname
-    - ifshort
-    - importas
-    - interfacebloat
     - ireturn
     - lll
-    - loggercheck
-    - maintidx
-    - makezero
-    - maligned
-    - nestif
     - nlreturn
     - nonamedreturns
-    - nosnakecase
-    - nosprintfhostport
-    - testpackage
+    - paralleltest
+    - tagalign
     - tagliatelle
+    - testpackage
     - varnamelen
-    - whitespace
     - wrapcheck
-    - varcheck
-    - interfacer
-    - scopelint
-    - goimports
     - wsl
-    - gomnd
