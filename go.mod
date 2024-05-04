@@ -6,7 +6,6 @@ require (
 	github.com/brianvoe/gofakeit/v6 v6.28.0
 	github.com/gin-contrib/cors v1.7.2
 	github.com/gin-gonic/gin v1.9.1
-	github.com/go-playground/validator/v10 v10.20.0
 	github.com/go-resty/resty/v2 v2.12.0
 	github.com/jarcoal/httpmock v1.3.1
 	github.com/joho/godotenv v1.5.1
@@ -49,6 +48,7 @@ require (
 	github.com/go-ole/go-ole v1.3.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
+	github.com/go-playground/validator/v10 v10.20.0 // indirect
 	github.com/go-sql-driver/mysql v1.8.1 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
