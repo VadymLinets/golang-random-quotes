@@ -1,0 +1,11 @@
+# Parameters doc: https://vektra.github.io/mockery/latest/configuration/#parameter-descriptions
+disable-version-string: True
+with-expecter: True
+outpkg: mocks
+dir: test/mocks
+filename: "{{.PackageName}}_{{.InterfaceName | snakecase }}.go"
+mockname: "{{.PackageName | camelcase }}{{.InterfaceName | camelcase }}"
+packages:
+  quote/internal/quote:
+    interfaces:
+      Database:

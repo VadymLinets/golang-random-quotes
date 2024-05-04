@@ -1,0 +1,18 @@
+version: '3.7'
+
+services:
+  backend:
+    build:
+      context: ..
+    container_name: quote-local
+    environment:
+      SERVER_ADDRESS: "0.0.0.0:1140"
+      CORS_MAX_AGE: 300
+      SERVER_READ_HEADER_TIMEOUT: "10s"
+      GORM_DIALECT: "postgres"
+      GORM_DSN: "host=db user=postgres password=postgres dbname=quotes port=5432 sslmode=disable"
+      GORM_MIGRATION_PATH: "migrations"
+      RANDOM_QUOTE_CHANCE: 20
+    ports:
+      - '1140:1140'
+    restart: always

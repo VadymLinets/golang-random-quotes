@@ -1,0 +1,68 @@
+run:
+  concurrency: 6
+
+issues:
+  exclude-dirs:
+    - .idea
+    - .git
+    - .run
+    - containers
+    - migrations
+    - postman
+
+linters:
+  enable-all: true
+  disable:
+    - exhaustive
+    - structcheck
+    - paralleltest
+    - gofumpt
+    - stylecheck
+    - tagalign
+    - containedctx
+    - cyclop
+    - deadcode
+    - decorder
+    - depguard
+    - gci
+    - dogsled
+    - dupword
+    - execinquery
+    - exhaustivestruct
+    - exhaustruct
+    - forbidigo
+    - forcetypeassert
+    - funlen
+    - gochecknoglobals
+    - gochecknoinits
+    - gocognit
+    - gocyclo
+    - godox
+    - gosec
+    - golint
+    - gomodguard
+    - goprintffuncname
+    - ifshort
+    - importas
+    - interfacebloat
+    - ireturn
+    - lll
+    - loggercheck
+    - maintidx
+    - makezero
+    - maligned
+    - nestif
+    - nlreturn
+    - nonamedreturns
+    - nosnakecase
+    - nosprintfhostport
+    - testpackage
+    - tagliatelle
+    - varnamelen
+    - whitespace
+    - wrapcheck
+    - varcheck
+    - interfacer
+    - scopelint
+    - goimports
+    - wsl

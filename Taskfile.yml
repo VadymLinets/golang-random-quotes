@@ -1,0 +1,73 @@
+version: '3'
+
+env:
+  RUNNER: podman # Or you can use 'docker'
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_DB: quotes
+  POSTGRES_ADDR: 5432
+
+tasks:
+  run:
+    desc: Build and run the go binary.
+    deps: [database-up]
+    cmds:
+      - go run main.go
+
+  container-run:
+    desc: Run application in the docker or podman container.
+    deps: [database-up]
+    dir: '{{.USER_WORKING_DIR}}/containers'
+    aliases: [crun]
+    cmd: bash -c "$RUNNER-compose -f service.yml up -d --no-deps --build"
+
+  container-stop:
+    desc: Stop docker or podman container with running application.
+    dir: '{{.USER_WORKING_DIR}}/containers'
+    aliases: [cstop]
+    cmd: bash -c "$RUNNER-compose -f service.yml down"
+
+  database-up:
+    desc: Create the database container throw docker or podman.
+    dir: '{{.USER_WORKING_DIR}}/containers'
+    aliases: [db]
+    cmd: bash -c "$RUNNER-compose -f database.yml up -d"
+
+  database-down:
+    desc: Drop the database container throw docker or podman.
+    dir: '{{.USER_WORKING_DIR}}/containers'
+    aliases: [dbd]
+    cmd: bash -c "$RUNNER-compose -f database.yml down"
+
+  mockery:
+    desc: Run mockery command for regenerate mocks
+    aliases: [mock, mocks]
+    cmds:
+      - go install github.com/vektra/mockery/v2@latest
+      - rm -rf ./test/mocks
+      - mockery --config=.mockery.yaml
+
+  lint:
+    desc: Runs golangci-lint
+    cmd: golangci-lint run ./...
+
+  format:
+    desc: Auto formating golang code
+    aliases: [f]
+    cmds:
+      - go mod tidy
+      - gofumpt -l -w .
+      - gci write --skip-generated -s standard -s default -s "prefix(quote)" -s blank -s dot .
+
+  upgrade-libraries:
+    desc: Upgrades all libraries that used on the project
+    aliases: [upgr]
+    cmds:
+      - go get -u ./...
+      - go mod tidy
+
+  test:
+    desc: Run all tests
+    cmds:
+      - go install github.com/mfridman/tparse@latest
+      - go test -v ./... -race -cover -json | tparse -all
