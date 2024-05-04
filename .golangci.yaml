@@ -66,3 +66,4 @@ linters:
     - scopelint
     - goimports
     - wsl
+    - gomnd
