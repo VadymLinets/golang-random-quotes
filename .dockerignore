@@ -103,11 +103,13 @@ go.work
 ### Local files and folders
 .env
 .env.example
+.gitignore
 .golangci.yaml
 .mockery.yaml
 Dockerfile
 README.md
 Taskfile.yml
 .run
+.git
 containers
 postman
