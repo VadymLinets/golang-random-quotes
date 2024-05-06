@@ -13,12 +13,12 @@ import (
 	"quote/config"
 )
 
-type Gorm struct {
+type Postgres struct {
 	db  *gorm.DB
 	cfg *config.PostgresConfig
 }
 
-func (p *Gorm) Ping(ctx context.Context) error {
+func (p *Postgres) Ping(ctx context.Context) error {
 	db, err := p.db.DB()
 	if err != nil {
 		return err
@@ -27,7 +27,7 @@ func (p *Gorm) Ping(ctx context.Context) error {
 	return db.PingContext(ctx)
 }
 
-func (p *Gorm) GetQuote(ctx context.Context, quoteID string) (quote Quote, err error) {
+func (p *Postgres) GetQuote(ctx context.Context, quoteID string) (quote Quote, err error) {
 	err = p.db.Table("quotes").
 		WithContext(ctx).
 		Select("*").
@@ -36,7 +36,7 @@ func (p *Gorm) GetQuote(ctx context.Context, quoteID string) (quote Quote, err e
 	return
 }
 
-func (p *Gorm) GetQuotes(ctx context.Context, userID string) (quotes []Quote, err error) {
+func (p *Postgres) GetQuotes(ctx context.Context, userID string) (quotes []Quote, err error) {
 	viewed := p.db.Table("quotes").
 		WithContext(ctx).
 		Select("quotes.id").
@@ -52,7 +52,7 @@ func (p *Gorm) GetQuotes(ctx context.Context, userID string) (quotes []Quote, er
 	return
 }
 
-func (p *Gorm) GetSameQuote(ctx context.Context, userID, quoteID string) (quote Quote, err error) {
+func (p *Postgres) GetSameQuote(ctx context.Context, userID, quoteID string) (quote Quote, err error) {
 	viewed := p.db.Table("quotes").
 		Select("quotes.id").
 		Joins("INNER JOIN views ON views.quote_id = quotes.id").
@@ -74,7 +74,7 @@ func (p *Gorm) GetSameQuote(ctx context.Context, userID, quoteID string) (quote 
 	return
 }
 
-func (p *Gorm) GetView(ctx context.Context, userID, quoteID string) (view View, err error) {
+func (p *Postgres) GetView(ctx context.Context, userID, quoteID string) (view View, err error) {
 	err = p.db.Table("views").
 		WithContext(ctx).
 		Where("user_id = ? AND quote_id = ?", userID, quoteID).
@@ -82,32 +82,32 @@ func (p *Gorm) GetView(ctx context.Context, userID, quoteID string) (view View, 
 	return
 }
 
-func (p *Gorm) SaveQuote(ctx context.Context, quote Quote) error {
+func (p *Postgres) SaveQuote(ctx context.Context, quote Quote) error {
 	return p.db.Table("quotes").WithContext(ctx).Save(quote).Error
 }
 
-func (p *Gorm) MarkAsViewed(ctx context.Context, userID, quoteID string) error {
+func (p *Postgres) MarkAsViewed(ctx context.Context, userID, quoteID string) error {
 	return p.db.Table("views").WithContext(ctx).Create(View{
 		UserID:  userID,
 		QuoteID: quoteID,
 	}).Error
 }
 
-func (p *Gorm) MarkAsLiked(ctx context.Context, userID, quoteID string) error {
+func (p *Postgres) MarkAsLiked(ctx context.Context, userID, quoteID string) error {
 	return p.db.Table("views").
 		WithContext(ctx).
 		Where("user_id = ? AND quote_id = ?", userID, quoteID).
 		Update("liked", true).Error
 }
 
-func (p *Gorm) LikeQuote(ctx context.Context, quoteID string) error {
+func (p *Postgres) LikeQuote(ctx context.Context, quoteID string) error {
 	return p.db.Table("quotes").
 		WithContext(ctx).
 		Where("id = ?", quoteID).
 		UpdateColumn("likes", gorm.Expr("likes + 1")).Error
 }
 
-func (p *Gorm) Start(_ context.Context) (err error) {
+func (p *Postgres) Start(_ context.Context) (err error) {
 	p.db, err = gorm.Open(postgres.Open(p.cfg.DSN), &gorm.Config{
 		Logger: glog.Default.LogMode(glog.Silent),
 	})
@@ -128,7 +128,7 @@ func (p *Gorm) Start(_ context.Context) (err error) {
 	return
 }
 
-func (p *Gorm) Stop(ctx context.Context) error {
+func (p *Postgres) Stop(ctx context.Context) error {
 	sql, err := p.db.WithContext(ctx).DB()
 	if err != nil {
 		return err
@@ -142,6 +142,6 @@ func (p *Gorm) Stop(ctx context.Context) error {
 	return nil
 }
 
-func NewGorm(cfg *config.Config) *Gorm {
-	return &Gorm{cfg: &cfg.PostgresConfig}
+func NewPostgres(cfg *config.Config) *Postgres {
+	return &Postgres{cfg: &cfg.PostgresConfig}
 }

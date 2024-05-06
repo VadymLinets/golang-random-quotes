@@ -25,7 +25,7 @@ const (
 	corsMaxAge       = 300
 )
 
-func runEssentials(t *testing.T) (*config.Config, *database.Gorm) {
+func runEssentials(t *testing.T) (*config.Config, *database.Postgres) {
 	t.Helper()
 
 	ctx := context.Background()
@@ -87,7 +87,7 @@ func runEssentials(t *testing.T) (*config.Config, *database.Gorm) {
 
 	time.Sleep(waitForAppStart) // Wait until the app starts
 
-	db := database.NewGorm(cfg)
+	db := database.NewPostgres(cfg)
 	require.NoError(t, db.Start(ctx))
 	t.Cleanup(func() {
 		if err = db.Stop(ctx); err != nil {

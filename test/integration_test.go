@@ -38,7 +38,7 @@ func TestIntegration(t *testing.T) {
 	getSameQuote(t, cfg, client, db)
 }
 
-func getQuote(t *testing.T, cfg *config.Config, client *resty.Client, db *database.Gorm) {
+func getQuote(t *testing.T, cfg *config.Config, client *resty.Client, db *database.Postgres) {
 	t.Helper()
 
 	params := map[string]string{
@@ -64,7 +64,7 @@ func getQuote(t *testing.T, cfg *config.Config, client *resty.Client, db *databa
 	require.Equal(t, testQuote, dbq)
 }
 
-func likeQuote(t *testing.T, cfg *config.Config, client *resty.Client, db *database.Gorm) {
+func likeQuote(t *testing.T, cfg *config.Config, client *resty.Client, db *database.Postgres) {
 	t.Helper()
 
 	params := map[string]string{
@@ -81,7 +81,7 @@ func likeQuote(t *testing.T, cfg *config.Config, client *resty.Client, db *datab
 	require.Equal(t, int64(1), q.Likes)
 }
 
-func getSameQuote(t *testing.T, cfg *config.Config, client *resty.Client, db *database.Gorm) {
+func getSameQuote(t *testing.T, cfg *config.Config, client *resty.Client, db *database.Postgres) {
 	t.Helper()
 
 	sameQuote := database.Quote{

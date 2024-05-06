@@ -16,9 +16,9 @@ func Exec(cfg *config.Config) fx.Option {
 	return fx.Options(
 		fx.Provide(
 			func() *config.Config { return cfg },
-			database.NewGorm,
+			database.NewPostgres,
 			fx.Annotate(
-				copyForAnnotation[database.Gorm],
+				copyForAnnotation[database.Postgres],
 				fx.As(new(heartbeat.Database)),
 				fx.As(new(quote.Database)),
 			),
@@ -41,7 +41,7 @@ func copyForAnnotation[T any](v *T) *T {
 type hooks struct {
 	fx.In
 
-	Database *database.Gorm
+	Database *database.Postgres
 	Server   *server.HTTPServer
 }
 
