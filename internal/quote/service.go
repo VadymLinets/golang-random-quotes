@@ -40,7 +40,7 @@ func (s *Service) GetQuote(ctx context.Context, userID string) (Quote, error) {
 		return Quote{}, fmt.Errorf("failed to mark as viewed: %w", err)
 	}
 
-	return Quote{ID: quote.ID, Quote: quote.Quote, Author: quote.Author}, nil
+	return fromDatabaseQuoteToQuote(quote), nil
 }
 
 func (s *Service) LikeQuote(ctx context.Context, userID, quoteID string) error {
@@ -81,7 +81,7 @@ func (s *Service) GetSameQuote(ctx context.Context, userID, quoteID string) (Quo
 		return Quote{}, fmt.Errorf("failed to mark as viewed: %w", err)
 	}
 
-	return Quote{ID: quote.ID, Quote: quote.Quote, Author: quote.Author}, nil
+	return fromDatabaseQuoteToQuote(quote), nil
 }
 
 func NewService(cfg *config.Config, db Database, resty *resty.Client) *Service {
@@ -98,20 +98,24 @@ func (s *Service) getQuote(ctx context.Context, quotes []database.Quote) (databa
 
 	if (oneHundredPercent-s.cfg.RandomQuoteChance) > randomPercent && len(quotes) > 0 {
 		var likes float64
-		for i := range quotes {
-			if quotes[i].Likes == 0 {
-				quotes[i].Likes++
+		for _, q := range quotes {
+			if q.Likes == 0 {
+				q.Likes++
 			}
 
-			likes += float64(quotes[i].Likes)
+			likes += float64(q.Likes)
 		}
 
 		var accumulator float64
 		del := likes * oneHundredPercent / (oneHundredPercent - s.cfg.RandomQuoteChance)
-		for _, q := range quotes {
+		for i, q := range quotes {
+			if q.Likes == 0 {
+				q.Likes++
+			}
+
 			percent := float64(q.Likes) / del * oneHundredPercent
 			if percent+accumulator >= randomPercent {
-				return q, nil
+				return quotes[i], nil
 			}
 
 			accumulator += percent
@@ -133,12 +137,7 @@ func (s *Service) getRandomQuote(ctx context.Context) (database.Quote, error) {
 		return database.Quote{}, fmt.Errorf("failed to unmarshal random quote: %w", err)
 	}
 
-	quote := database.Quote{
-		ID:     randomQuote.ID,
-		Quote:  randomQuote.Content,
-		Author: randomQuote.Author,
-	}
-
+	quote := randomQuote.toDatabase()
 	err = s.db.SaveQuote(ctx, quote)
 	if err != nil {
 		return database.Quote{}, fmt.Errorf("failed to save new random quote: %w", err)

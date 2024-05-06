@@ -22,6 +22,7 @@ var (
 		ID:     gofakeit.UUID(),
 		Quote:  gofakeit.Quote(),
 		Author: gofakeit.Name(),
+		Tags:   gofakeit.NiceColors(),
 	}
 )
 
@@ -55,15 +56,12 @@ func getQuote(t *testing.T, cfg *config.Config, client *resty.Client, db *databa
 		ID:     testQuote.ID,
 		Quote:  testQuote.Quote,
 		Author: testQuote.Author,
+		Tags:   testQuote.Tags,
 	}, q)
 
 	dbq, err := db.GetQuote(context.Background(), testQuote.ID)
 	require.NoError(t, err)
-	require.Equal(t, database.Quote{
-		ID:     testQuote.ID,
-		Quote:  testQuote.Quote,
-		Author: testQuote.Author,
-	}, dbq)
+	require.Equal(t, testQuote, dbq)
 }
 
 func likeQuote(t *testing.T, cfg *config.Config, client *resty.Client, db *database.Gorm) {
@@ -90,12 +88,14 @@ func getSameQuote(t *testing.T, cfg *config.Config, client *resty.Client, db *da
 		ID:     gofakeit.UUID(),
 		Quote:  gofakeit.Quote(),
 		Author: testQuote.Author,
+		Tags:   gofakeit.NiceColors(),
 	}
 
 	randomQuote := database.Quote{
 		ID:     gofakeit.UUID(),
 		Quote:  gofakeit.Quote(),
 		Author: gofakeit.Name(),
+		Tags:   gofakeit.NiceColors(),
 	}
 
 	err := db.SaveQuote(context.Background(), sameQuote)
@@ -120,5 +120,6 @@ func getSameQuote(t *testing.T, cfg *config.Config, client *resty.Client, db *da
 		ID:     sameQuote.ID,
 		Quote:  sameQuote.Quote,
 		Author: sameQuote.Author,
+		Tags:   sameQuote.Tags,
 	}, q)
 }

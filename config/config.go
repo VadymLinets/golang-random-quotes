@@ -10,7 +10,7 @@ import (
 
 type Config struct {
 	ServerConfig
-	GormConfig
+	PostgresConfig
 	QuotesConfig
 }
 
@@ -20,10 +20,9 @@ type ServerConfig struct {
 	ReadHeaderTimeout time.Duration `envconfig:"SERVER_READ_HEADER_TIMEOUT"`
 }
 
-type GormConfig struct {
-	Dialect       string `envconfig:"GORM_DIALECT"`
-	DSN           string `envconfig:"GORM_DSN"`
-	MigrationPath string `envconfig:"GORM_MIGRATION_PATH" default:"migrations"`
+type PostgresConfig struct {
+	DSN           string `envconfig:"POSTGRES_DSN"`
+	MigrationPath string `envconfig:"POSTGRES_MIGRATION_PATH" default:"migrations"`
 }
 
 type QuotesConfig struct {

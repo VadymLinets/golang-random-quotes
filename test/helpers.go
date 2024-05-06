@@ -63,8 +63,7 @@ func runEssentials(t *testing.T) (*config.Config, *database.Gorm) {
 			CorsMaxAge:        corsMaxAge,
 			ReadHeaderTimeout: time.Second,
 		},
-		GormConfig: config.GormConfig{
-			Dialect:       "postgres",
+		PostgresConfig: config.PostgresConfig{
 			DSN:           fmt.Sprintf("host=localhost user=postgres password=postgres dbname=test_quotes port=%s sslmode=disable", port),
 			MigrationPath: "../migrations",
 		},

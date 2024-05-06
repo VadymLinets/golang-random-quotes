@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	"github.com/pressly/goose/v3"
-	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	glog "gorm.io/gorm/logger"
@@ -16,7 +15,7 @@ import (
 
 type Gorm struct {
 	db  *gorm.DB
-	cfg *config.GormConfig
+	cfg *config.PostgresConfig
 }
 
 func (p *Gorm) Ping(ctx context.Context) error {
@@ -31,12 +30,7 @@ func (p *Gorm) Ping(ctx context.Context) error {
 func (p *Gorm) GetQuote(ctx context.Context, quoteID string) (quote Quote, err error) {
 	err = p.db.Table("quotes").
 		WithContext(ctx).
-		Select([]string{
-			"id",
-			"quote",
-			"author",
-			"likes",
-		}).
+		Select("*").
 		Where("quotes.id = ?", quoteID).
 		First(&quote).Error
 	return
@@ -51,12 +45,7 @@ func (p *Gorm) GetQuotes(ctx context.Context, userID string) (quotes []Quote, er
 
 	err = p.db.Table("quotes").
 		WithContext(ctx).
-		Select([]string{
-			"id",
-			"quote",
-			"author",
-			"likes",
-		}).
+		Select("*").
 		Where("quotes.id NOT IN (?)", viewed).
 		Order("quotes.likes DESC").
 		Find(&quotes).Error
@@ -73,12 +62,7 @@ func (p *Gorm) GetSameQuote(ctx context.Context, userID, quoteID string) (quote 
 
 	err = p.db.Table("quotes").
 		WithContext(ctx).
-		Select([]string{
-			"id",
-			"quote",
-			"author",
-			"likes",
-		}).
+		Select("*").
 		Where("quotes.id NOT IN (?)", viewed).
 		Order("(case when quotes.author = (" + author + ") then 1 else 2 end)").
 		Order("quotes.likes DESC").
@@ -124,16 +108,7 @@ func (p *Gorm) LikeQuote(ctx context.Context, quoteID string) error {
 }
 
 func (p *Gorm) Start(_ context.Context) (err error) {
-	var dialector gorm.Dialector
-
-	switch p.cfg.Dialect {
-	case "mysql":
-		dialector = mysql.Open(p.cfg.DSN)
-	case "postgres":
-		dialector = postgres.Open(p.cfg.DSN)
-	}
-
-	p.db, err = gorm.Open(dialector, &gorm.Config{
+	p.db, err = gorm.Open(postgres.Open(p.cfg.DSN), &gorm.Config{
 		Logger: glog.Default.LogMode(glog.Silent),
 	})
 	if err != nil {
@@ -145,7 +120,7 @@ func (p *Gorm) Start(_ context.Context) (err error) {
 		return
 	}
 
-	if err = goose.SetDialect(p.cfg.Dialect); err != nil {
+	if err = goose.SetDialect("postgres"); err != nil {
 		return
 	}
 
@@ -168,5 +143,5 @@ func (p *Gorm) Stop(ctx context.Context) error {
 }
 
 func NewGorm(cfg *config.Config) *Gorm {
-	return &Gorm{cfg: &cfg.GormConfig}
+	return &Gorm{cfg: &cfg.PostgresConfig}
 }
