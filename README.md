@@ -22,8 +22,8 @@ It's a service that shows random quotes, allows to like them and show quote that
 
 2. Start the postgres database
 
-   > **<span style="color:#79b6c9">ⓘ NOTE:</span>** If you start the program by running the taskfile you can skip this
-   step because db will start up automatically
+   > **<span style="color:#79b6c9">ⓘ NOTE:</span>** If you're starting the program by running the taskfile command, you
+   can skip this step because db will start up automatically
 
    ```shell
    export POSTGRES_ADDR=5432 POSTGRES_USER=postgres POSTGRES_PASSWORD=postgres POSTGRES_DB=quotes
