@@ -22,7 +22,7 @@ var testQuote = RandomQuote{
 }
 
 func TestGetRandomQuote_Success(t *testing.T) {
-	svc, db := newService(t)
+	svc, db := newTestService(t)
 
 	responder, err := httpmock.NewJsonResponder(200, testQuote)
 	require.NoError(t, err)
@@ -34,7 +34,9 @@ func TestGetRandomQuote_Success(t *testing.T) {
 	require.Equal(t, testQuote.toDatabase(), quote)
 }
 
-func newService(t *testing.T) (*Service, *mocks.QuoteapiDatabase) {
+func newTestService(t *testing.T) (*Service, *mocks.QuoteapiDatabase) {
+	t.Helper()
+
 	client := resty.New()
 	httpmock.ActivateNonDefault(client.GetClient())
 	t.Cleanup(httpmock.Deactivate)

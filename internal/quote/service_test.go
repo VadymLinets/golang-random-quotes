@@ -24,7 +24,7 @@ var (
 )
 
 func TestGetQuote_Success(t *testing.T) {
-	svc, db, _ := newService(t, &config.Config{})
+	svc, db, _ := newTestService(t, &config.Config{})
 	db.EXPECT().GetQuotes(mock.Anything, testUserID).Return([]database.Quote{testQuote}, nil)
 	db.EXPECT().MarkAsViewed(mock.Anything, testUserID, testQuote.ID).Return(nil)
 
@@ -36,7 +36,7 @@ func TestGetQuote_Success(t *testing.T) {
 func TestGetQuote_SuccessRandom(t *testing.T) {
 	cfg := config.Config{QuotesConfig: config.QuotesConfig{RandomQuoteChance: 100}}
 
-	svc, db, api := newService(t, &cfg)
+	svc, db, api := newTestService(t, &cfg)
 	db.EXPECT().GetQuotes(mock.Anything, testUserID).Return(nil, nil)
 	db.EXPECT().MarkAsViewed(mock.Anything, testUserID, testQuote.ID).Return(nil)
 	api.EXPECT().GetRandomQuote(mock.Anything).Return(testQuote, nil)
@@ -49,7 +49,7 @@ func TestGetQuote_SuccessRandom(t *testing.T) {
 func TestLikeQuote_Success(t *testing.T) {
 	view := database.View{Liked: false}
 
-	svc, db, _ := newService(t, &config.Config{})
+	svc, db, _ := newTestService(t, &config.Config{})
 	db.EXPECT().GetView(mock.Anything, testUserID, testQuote.ID).Return(view, nil)
 	db.EXPECT().LikeQuote(mock.Anything, testQuote.ID).Return(nil)
 	db.EXPECT().MarkAsLiked(mock.Anything, testUserID, testQuote.ID).Return(nil)
@@ -61,7 +61,7 @@ func TestLikeQuote_Success(t *testing.T) {
 func TestLikeQuote_AlreadyLiked(t *testing.T) {
 	view := database.View{Liked: true}
 
-	svc, db, _ := newService(t, &config.Config{})
+	svc, db, _ := newTestService(t, &config.Config{})
 	db.EXPECT().GetView(mock.Anything, testUserID, testQuote.ID).Return(view, nil)
 
 	err := svc.LikeQuote(context.Background(), testUserID, testQuote.ID)
@@ -69,7 +69,7 @@ func TestLikeQuote_AlreadyLiked(t *testing.T) {
 }
 
 func TestGetSameQuote_Success(t *testing.T) {
-	svc, db, _ := newService(t, &config.Config{})
+	svc, db, _ := newTestService(t, &config.Config{})
 	db.EXPECT().GetQuote(mock.Anything, testQuote.ID).Return(testQuote, nil)
 	db.EXPECT().GetSameQuote(mock.Anything, testUserID, testQuote).Return(testQuote, nil)
 	db.EXPECT().MarkAsViewed(mock.Anything, testUserID, testQuote.ID).Return(nil)
@@ -80,7 +80,7 @@ func TestGetSameQuote_Success(t *testing.T) {
 }
 
 func TestGetSameQuote_Random(t *testing.T) {
-	svc, db, api := newService(t, &config.Config{})
+	svc, db, api := newTestService(t, &config.Config{})
 	db.EXPECT().GetQuote(mock.Anything, testQuote.ID).Return(testQuote, nil)
 	db.EXPECT().GetSameQuote(mock.Anything, testUserID, testQuote).Return(database.Quote{}, database.ErrRecordNotFound)
 	db.EXPECT().MarkAsViewed(mock.Anything, testUserID, testQuote.ID).Return(nil)
@@ -91,7 +91,7 @@ func TestGetSameQuote_Random(t *testing.T) {
 	require.Equal(t, fromDatabaseQuoteToQuote(testQuote), sameQuote)
 }
 
-func newService(t *testing.T, cfg *config.Config) (*Service, *mocks.QuoteDatabase, *mocks.QuoteAPI) {
+func newTestService(t *testing.T, cfg *config.Config) (*Service, *mocks.QuoteDatabase, *mocks.QuoteAPI) {
 	t.Helper()
 
 	db := mocks.NewQuoteDatabase(t)
