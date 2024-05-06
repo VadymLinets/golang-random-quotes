@@ -7,6 +7,7 @@ import (
 	"quote/config"
 	"quote/internal/heartbeat"
 	"quote/internal/quote"
+	"quote/internal/quoteapi"
 	"quote/pkg/database"
 	"quote/server"
 	"quote/server/handlers"
@@ -21,8 +22,10 @@ func Exec(cfg *config.Config) fx.Option {
 				copyForAnnotation[database.Postgres],
 				fx.As(new(heartbeat.Database)),
 				fx.As(new(quote.Database)),
+				fx.As(new(quoteapi.Database)),
 			),
 			resty.New,
+			fx.Annotate(quoteapi.NewService, fx.As(new(quote.API))),
 			quote.NewService,
 			heartbeat.NewService,
 			handlers.NewHandler,

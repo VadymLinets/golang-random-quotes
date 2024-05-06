@@ -15,7 +15,7 @@ func (h *Handler) GetQuoteHandler(c *gin.Context) {
 		return
 	}
 
-	resp, err := h.some.GetQuote(c, userID)
+	resp, err := h.quotes.GetQuote(c, userID)
 	if err != nil {
 		slog.Error("Failed to get quote:", "err", err)
 		c.Status(http.StatusInternalServerError)
@@ -40,7 +40,7 @@ func (h *Handler) LikeQuoteHandler(c *gin.Context) {
 		return
 	}
 
-	err := h.some.LikeQuote(c, userID, quoteID)
+	err := h.quotes.LikeQuote(c, userID, quoteID)
 	if err != nil {
 		slog.Error("Failed to like quote:", "quote id", quoteID, "err", err)
 		c.Status(http.StatusInternalServerError)
@@ -65,7 +65,7 @@ func (h *Handler) GetSameQuoteHandler(c *gin.Context) {
 		return
 	}
 
-	quote, err := h.some.GetSameQuote(c, userID, quoteID)
+	quote, err := h.quotes.GetSameQuote(c, userID, quoteID)
 	if err != nil {
 		slog.Error("Failed to get same quote:", "quote id", quoteID, "err", err)
 		c.Status(http.StatusInternalServerError)

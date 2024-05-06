@@ -9,3 +9,7 @@ packages:
   quote/internal/quote:
     interfaces:
       Database:
+      API:
+  quote/internal/quoteapi:
+    interfaces:
+      Database:

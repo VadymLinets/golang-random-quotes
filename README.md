@@ -21,6 +21,10 @@ It's a service that shows random quotes, allows to like them and show quote that
    1.1. Change envs in [Taskfile.yml](./Taskfile.yml) file
 
 2. Start the postgres database
+
+   > **<span style="color:#79b6c9">ⓘ NOTE:</span>** If you start the program by running the taskfile you can skip this
+   step because db will start up automatically
+
    ```shell
    export POSTGRES_ADDR=5432 POSTGRES_USER=postgres POSTGRES_PASSWORD=postgres POSTGRES_DB=quotes
    cd containers && docker-compose -f database.yml up -d && cd ..

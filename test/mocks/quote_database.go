@@ -397,53 +397,6 @@ func (_c *QuoteDatabase_MarkAsViewed_Call) RunAndReturn(run func(context.Context
 	return _c
 }
 
-// SaveQuote provides a mock function with given fields: ctx, _a1
-func (_m *QuoteDatabase) SaveQuote(ctx context.Context, _a1 database.Quote) error {
-	ret := _m.Called(ctx, _a1)
-
-	if len(ret) == 0 {
-		panic("no return value specified for SaveQuote")
-	}
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, database.Quote) error); ok {
-		r0 = rf(ctx, _a1)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
-}
-
-// QuoteDatabase_SaveQuote_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SaveQuote'
-type QuoteDatabase_SaveQuote_Call struct {
-	*mock.Call
-}
-
-// SaveQuote is a helper method to define mock.On call
-//   - ctx context.Context
-//   - _a1 database.Quote
-func (_e *QuoteDatabase_Expecter) SaveQuote(ctx interface{}, _a1 interface{}) *QuoteDatabase_SaveQuote_Call {
-	return &QuoteDatabase_SaveQuote_Call{Call: _e.mock.On("SaveQuote", ctx, _a1)}
-}
-
-func (_c *QuoteDatabase_SaveQuote_Call) Run(run func(ctx context.Context, _a1 database.Quote)) *QuoteDatabase_SaveQuote_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(database.Quote))
-	})
-	return _c
-}
-
-func (_c *QuoteDatabase_SaveQuote_Call) Return(_a0 error) *QuoteDatabase_SaveQuote_Call {
-	_c.Call.Return(_a0)
-	return _c
-}
-
-func (_c *QuoteDatabase_SaveQuote_Call) RunAndReturn(run func(context.Context, database.Quote) error) *QuoteDatabase_SaveQuote_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
 // NewQuoteDatabase creates a new instance of QuoteDatabase. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewQuoteDatabase(t interface {

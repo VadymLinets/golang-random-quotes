@@ -11,8 +11,11 @@ type Database interface {
 	GetQuotes(ctx context.Context, userID string) ([]database.Quote, error)
 	GetSameQuote(ctx context.Context, userID string, viewedQuote database.Quote) (database.Quote, error)
 	GetView(ctx context.Context, userID, quoteID string) (database.View, error)
-	SaveQuote(ctx context.Context, quote database.Quote) error
 	MarkAsViewed(ctx context.Context, userID, quoteID string) error
 	MarkAsLiked(ctx context.Context, userID, quoteID string) error
 	LikeQuote(ctx context.Context, quoteID string) error
+}
+
+type API interface {
+	GetRandomQuote(ctx context.Context) (database.Quote, error)
 }

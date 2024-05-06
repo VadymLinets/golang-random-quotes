@@ -2,27 +2,21 @@ package quote
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"math/rand"
 	"time"
 
-	"github.com/go-resty/resty/v2"
-
 	"quote/config"
 	"quote/pkg/database"
 )
 
-const (
-	randomQuoteURL            = "https://api.quotable.io/random"
-	oneHundredPercent float64 = 100
-)
+const oneHundredPercent float64 = 100
 
 type Service struct {
-	cfg   *config.QuotesConfig
-	db    Database
-	resty *resty.Client
+	cfg *config.QuotesConfig
+	db  Database
+	api API
 }
 
 func (s *Service) GetQuote(ctx context.Context, userID string) (Quote, error) {
@@ -76,7 +70,7 @@ func (s *Service) GetSameQuote(ctx context.Context, userID, quoteID string) (Quo
 	if err != nil && !errors.Is(err, database.ErrRecordNotFound) {
 		return Quote{}, fmt.Errorf("failed to get same quote: %w", err)
 	} else if errors.Is(err, database.ErrRecordNotFound) {
-		quote, err = s.getRandomQuote(ctx)
+		quote, err = s.api.GetRandomQuote(ctx)
 		if err != nil {
 			return Quote{}, fmt.Errorf("failed to get random quote: %w", err)
 		}
@@ -89,11 +83,11 @@ func (s *Service) GetSameQuote(ctx context.Context, userID, quoteID string) (Quo
 	return fromDatabaseQuoteToQuote(quote), nil
 }
 
-func NewService(cfg *config.Config, db Database, resty *resty.Client) *Service {
+func NewService(cfg *config.Config, db Database, api API) *Service {
 	return &Service{
-		cfg:   &cfg.QuotesConfig,
-		db:    db,
-		resty: resty,
+		cfg: &cfg.QuotesConfig,
+		db:  db,
+		api: api,
 	}
 }
 
@@ -127,26 +121,5 @@ func (s *Service) getQuote(ctx context.Context, quotes []database.Quote) (databa
 		}
 	}
 
-	return s.getRandomQuote(ctx)
-}
-
-func (s *Service) getRandomQuote(ctx context.Context) (database.Quote, error) {
-	resp, err := s.resty.R().Get(randomQuoteURL)
-	if err != nil {
-		return database.Quote{}, fmt.Errorf("failed to receive random quote from site: %w", err)
-	}
-
-	var randomQuote RandomQuote
-	err = json.Unmarshal(resp.Body(), &randomQuote)
-	if err != nil {
-		return database.Quote{}, fmt.Errorf("failed to unmarshal random quote: %w", err)
-	}
-
-	quote := randomQuote.toDatabase()
-	err = s.db.SaveQuote(ctx, quote)
-	if err != nil {
-		return database.Quote{}, fmt.Errorf("failed to save new random quote: %w", err)
-	}
-
-	return quote, nil
+	return s.api.GetRandomQuote(ctx)
 }

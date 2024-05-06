@@ -11,7 +11,7 @@ import (
 )
 
 type Handler struct {
-	some      *quote.Service
+	quotes    *quote.Service
 	heartbeat *heartbeat.Service
 }
 
@@ -26,9 +26,9 @@ func (h *Handler) HeartBeat(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
-func NewHandler(some *quote.Service, heartbeat *heartbeat.Service) *Handler {
+func NewHandler(quotes *quote.Service, heartbeat *heartbeat.Service) *Handler {
 	return &Handler{
-		some:      some,
+		quotes:    quotes,
 		heartbeat: heartbeat,
 	}
 }
