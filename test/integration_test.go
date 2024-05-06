@@ -88,7 +88,7 @@ func getSameQuote(t *testing.T, cfg *config.Config, client *resty.Client, db *da
 		ID:     gofakeit.UUID(),
 		Quote:  gofakeit.Quote(),
 		Author: testQuote.Author,
-		Tags:   gofakeit.NiceColors(),
+		Tags:   testQuote.Tags,
 	}
 
 	randomQuote := database.Quote{

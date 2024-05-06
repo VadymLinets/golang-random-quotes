@@ -22,6 +22,63 @@ func (_m *QuoteDatabase) EXPECT() *QuoteDatabase_Expecter {
 	return &QuoteDatabase_Expecter{mock: &_m.Mock}
 }
 
+// GetQuote provides a mock function with given fields: ctx, quoteID
+func (_m *QuoteDatabase) GetQuote(ctx context.Context, quoteID string) (database.Quote, error) {
+	ret := _m.Called(ctx, quoteID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetQuote")
+	}
+
+	var r0 database.Quote
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, string) (database.Quote, error)); ok {
+		return rf(ctx, quoteID)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, string) database.Quote); ok {
+		r0 = rf(ctx, quoteID)
+	} else {
+		r0 = ret.Get(0).(database.Quote)
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, quoteID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// QuoteDatabase_GetQuote_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetQuote'
+type QuoteDatabase_GetQuote_Call struct {
+	*mock.Call
+}
+
+// GetQuote is a helper method to define mock.On call
+//   - ctx context.Context
+//   - quoteID string
+func (_e *QuoteDatabase_Expecter) GetQuote(ctx interface{}, quoteID interface{}) *QuoteDatabase_GetQuote_Call {
+	return &QuoteDatabase_GetQuote_Call{Call: _e.mock.On("GetQuote", ctx, quoteID)}
+}
+
+func (_c *QuoteDatabase_GetQuote_Call) Run(run func(ctx context.Context, quoteID string)) *QuoteDatabase_GetQuote_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(string))
+	})
+	return _c
+}
+
+func (_c *QuoteDatabase_GetQuote_Call) Return(_a0 database.Quote, _a1 error) *QuoteDatabase_GetQuote_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *QuoteDatabase_GetQuote_Call) RunAndReturn(run func(context.Context, string) (database.Quote, error)) *QuoteDatabase_GetQuote_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetQuotes provides a mock function with given fields: ctx, userID
 func (_m *QuoteDatabase) GetQuotes(ctx context.Context, userID string) ([]database.Quote, error) {
 	ret := _m.Called(ctx, userID)
@@ -81,9 +138,9 @@ func (_c *QuoteDatabase_GetQuotes_Call) RunAndReturn(run func(context.Context, s
 	return _c
 }
 
-// GetSameQuote provides a mock function with given fields: ctx, userID, author
-func (_m *QuoteDatabase) GetSameQuote(ctx context.Context, userID string, author string) (database.Quote, error) {
-	ret := _m.Called(ctx, userID, author)
+// GetSameQuote provides a mock function with given fields: ctx, userID, viewedQuote
+func (_m *QuoteDatabase) GetSameQuote(ctx context.Context, userID string, viewedQuote database.Quote) (database.Quote, error) {
+	ret := _m.Called(ctx, userID, viewedQuote)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetSameQuote")
@@ -91,17 +148,17 @@ func (_m *QuoteDatabase) GetSameQuote(ctx context.Context, userID string, author
 
 	var r0 database.Quote
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, string, string) (database.Quote, error)); ok {
-		return rf(ctx, userID, author)
+	if rf, ok := ret.Get(0).(func(context.Context, string, database.Quote) (database.Quote, error)); ok {
+		return rf(ctx, userID, viewedQuote)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, string, string) database.Quote); ok {
-		r0 = rf(ctx, userID, author)
+	if rf, ok := ret.Get(0).(func(context.Context, string, database.Quote) database.Quote); ok {
+		r0 = rf(ctx, userID, viewedQuote)
 	} else {
 		r0 = ret.Get(0).(database.Quote)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, string, string) error); ok {
-		r1 = rf(ctx, userID, author)
+	if rf, ok := ret.Get(1).(func(context.Context, string, database.Quote) error); ok {
+		r1 = rf(ctx, userID, viewedQuote)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -117,14 +174,14 @@ type QuoteDatabase_GetSameQuote_Call struct {
 // GetSameQuote is a helper method to define mock.On call
 //   - ctx context.Context
 //   - userID string
-//   - author string
-func (_e *QuoteDatabase_Expecter) GetSameQuote(ctx interface{}, userID interface{}, author interface{}) *QuoteDatabase_GetSameQuote_Call {
-	return &QuoteDatabase_GetSameQuote_Call{Call: _e.mock.On("GetSameQuote", ctx, userID, author)}
+//   - viewedQuote database.Quote
+func (_e *QuoteDatabase_Expecter) GetSameQuote(ctx interface{}, userID interface{}, viewedQuote interface{}) *QuoteDatabase_GetSameQuote_Call {
+	return &QuoteDatabase_GetSameQuote_Call{Call: _e.mock.On("GetSameQuote", ctx, userID, viewedQuote)}
 }
 
-func (_c *QuoteDatabase_GetSameQuote_Call) Run(run func(ctx context.Context, userID string, author string)) *QuoteDatabase_GetSameQuote_Call {
+func (_c *QuoteDatabase_GetSameQuote_Call) Run(run func(ctx context.Context, userID string, viewedQuote database.Quote)) *QuoteDatabase_GetSameQuote_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(string), args[2].(string))
+		run(args[0].(context.Context), args[1].(string), args[2].(database.Quote))
 	})
 	return _c
 }
@@ -134,7 +191,7 @@ func (_c *QuoteDatabase_GetSameQuote_Call) Return(_a0 database.Quote, _a1 error)
 	return _c
 }
 
-func (_c *QuoteDatabase_GetSameQuote_Call) RunAndReturn(run func(context.Context, string, string) (database.Quote, error)) *QuoteDatabase_GetSameQuote_Call {
+func (_c *QuoteDatabase_GetSameQuote_Call) RunAndReturn(run func(context.Context, string, database.Quote) (database.Quote, error)) *QuoteDatabase_GetSameQuote_Call {
 	_c.Call.Return(run)
 	return _c
 }

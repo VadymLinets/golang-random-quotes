@@ -62,9 +62,9 @@ func TestLikeQuote_Success(t *testing.T) {
 	view := database.View{Liked: false}
 
 	svc, db := newService(t, &config.Config{}, false)
-	db.EXPECT().GetView(context.Background(), testUserID, testQuote.ID).Return(view, nil)
-	db.EXPECT().LikeQuote(context.Background(), testQuote.ID).Return(nil)
-	db.EXPECT().MarkAsLiked(context.Background(), testUserID, testQuote.ID).Return(nil)
+	db.EXPECT().GetView(mock.Anything, testUserID, testQuote.ID).Return(view, nil)
+	db.EXPECT().LikeQuote(mock.Anything, testQuote.ID).Return(nil)
+	db.EXPECT().MarkAsLiked(mock.Anything, testUserID, testQuote.ID).Return(nil)
 
 	err := svc.LikeQuote(context.Background(), testUserID, testQuote.ID)
 	require.NoError(t, err)
@@ -74,7 +74,7 @@ func TestLikeQuote_AlreadyLiked(t *testing.T) {
 	view := database.View{Liked: true}
 
 	svc, db := newService(t, &config.Config{}, false)
-	db.EXPECT().GetView(context.Background(), testUserID, testQuote.ID).Return(view, nil)
+	db.EXPECT().GetView(mock.Anything, testUserID, testQuote.ID).Return(view, nil)
 
 	err := svc.LikeQuote(context.Background(), testUserID, testQuote.ID)
 	require.NoError(t, err)
@@ -82,7 +82,8 @@ func TestLikeQuote_AlreadyLiked(t *testing.T) {
 
 func TestGetSameQuote_Success(t *testing.T) {
 	svc, db := newService(t, &config.Config{}, false)
-	db.EXPECT().GetSameQuote(context.Background(), testUserID, testQuote.ID).Return(testQuote, nil)
+	db.EXPECT().GetQuote(mock.Anything, testQuote.ID).Return(testQuote, nil)
+	db.EXPECT().GetSameQuote(mock.Anything, testUserID, testQuote).Return(testQuote, nil)
 	db.EXPECT().MarkAsViewed(mock.Anything, testUserID, testQuote.ID).Return(nil)
 
 	sameQuote, err := svc.GetSameQuote(context.Background(), testUserID, testQuote.ID)
@@ -92,7 +93,8 @@ func TestGetSameQuote_Success(t *testing.T) {
 
 func TestGetSameQuote_Random(t *testing.T) {
 	svc, db := newService(t, &config.Config{}, true)
-	db.EXPECT().GetSameQuote(context.Background(), testUserID, testQuote.ID).Return(database.Quote{}, database.ErrRecordNotFound)
+	db.EXPECT().GetQuote(mock.Anything, testQuote.ID).Return(testQuote, nil)
+	db.EXPECT().GetSameQuote(mock.Anything, testUserID, testQuote).Return(database.Quote{}, database.ErrRecordNotFound)
 	db.EXPECT().SaveQuote(mock.Anything, testQuote).Return(nil)
 	db.EXPECT().MarkAsViewed(mock.Anything, testUserID, testQuote.ID).Return(nil)
 

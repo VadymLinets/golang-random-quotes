@@ -3,7 +3,7 @@ package database
 import (
 	"context"
 	"errors"
-	"fmt"
+	"strings"
 
 	"github.com/pressly/goose/v3"
 	"gorm.io/driver/postgres"
@@ -52,19 +52,20 @@ func (p *Postgres) GetQuotes(ctx context.Context, userID string) (quotes []Quote
 	return
 }
 
-func (p *Postgres) GetSameQuote(ctx context.Context, userID, quoteID string) (quote Quote, err error) {
+func (p *Postgres) GetSameQuote(ctx context.Context, userID string, viewedQuote Quote) (quote Quote, err error) {
 	viewed := p.db.Table("quotes").
 		Select("quotes.id").
 		Joins("INNER JOIN views ON views.quote_id = quotes.id").
 		Where("views.user_id = ?", userID)
 
-	author := fmt.Sprintf(`SELECT author FROM quotes WHERE id = '%s'`, quoteID)
+	tags := "'" + strings.Join(viewedQuote.Tags, "', '") + "'"
 
 	err = p.db.Table("quotes").
 		WithContext(ctx).
 		Select("*").
 		Where("quotes.id NOT IN (?)", viewed).
-		Order("(case when quotes.author = (" + author + ") then 1 else 2 end)").
+		Order("cardinality(array(select unnest(quotes.tags) intersect select unnest(array[" + tags + "]))) DESC").
+		Order("(case when quotes.author = '" + viewedQuote.Author + "' then 1 else 2 end)").
 		Order("quotes.likes DESC").
 		Limit(1).
 		First(&quote).Error

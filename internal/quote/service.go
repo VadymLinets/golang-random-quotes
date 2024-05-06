@@ -67,7 +67,12 @@ func (s *Service) LikeQuote(ctx context.Context, userID, quoteID string) error {
 }
 
 func (s *Service) GetSameQuote(ctx context.Context, userID, quoteID string) (Quote, error) {
-	quote, err := s.db.GetSameQuote(ctx, userID, quoteID)
+	viewedQuote, err := s.db.GetQuote(ctx, quoteID)
+	if err != nil {
+		return Quote{}, fmt.Errorf("failed to get viewed quote: %w", err)
+	}
+
+	quote, err := s.db.GetSameQuote(ctx, userID, viewedQuote)
 	if err != nil && !errors.Is(err, database.ErrRecordNotFound) {
 		return Quote{}, fmt.Errorf("failed to get same quote: %w", err)
 	} else if errors.Is(err, database.ErrRecordNotFound) {
