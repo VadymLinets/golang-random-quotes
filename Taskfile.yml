@@ -55,6 +55,8 @@ tasks:
     desc: Auto formating golang code
     aliases: [f]
     cmds:
+      - go install mvdan.cc/gofumpt@latest
+      - go install github.com/daixiang0/gci@latest
       - go mod tidy
       - gofumpt -l -w .
       - gci write --skip-generated -s standard -s default -s "prefix(quote)" -s blank -s dot .
