@@ -6,32 +6,35 @@ It's a service that shows random quotes, allows to like them and show quote that
 
 ## How to run
 
-1. Clone this repo
+1. Copy the [.env.example](.env.example) file to `.env` and change variables to what you need
 
-    ```shell
-    git clone <url>
-    ```
+   ```shell
+   cp .env.example .env && nano .env
+   ```
 
-2. Go to the cloned folder
+2. Start the postgres database
+   ```shell
+   cd containers && docker-compose -f database.yml up -d && cd ..
+   ```   
 
-    ```shell
-    cd quotes
-    ```
+   Or
 
-3. Run `go mod tidy` command
-4. Copy the [.env.example](.env.example) file and change variables to what you need
-5. Run the following command:
+   ```shell
+   task db
+   ```
+
+3. Run the following command:
 
     ```shell
     go run main.go
     ```
 
-6. Or you can run `Run` configuration if you are using `Goland`
-7. Or you can run the following taskfile command:
+4. Or you can run `Run` configuration if you are using `Goland`
+5. Or you can run the following taskfile command:
 
     ```shell
     task run
     ```
 
-8. Import [Quotes](./postman/Quotes.postman_collection.json) collection into Postman program
-9. Send request throw Postman
+6. Import [Quotes](./postman/Quotes.postman_collection.json) collection into `Postman` program
+7. Send request throw `Postman`
