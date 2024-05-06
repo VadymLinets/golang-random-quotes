@@ -1,8 +1,14 @@
-# Basic golang service
+# Quotes service
 
 ## Description
 
 It's a service that shows random quotes, allows to like them and show quote that is pretty similar to a specified one
+
+## Additional programs
+
+1. [Taskfile](https://taskfile.dev/installation/) (Optional)
+2. docker-compose or podman-compose
+3. [Postman](https://www.postman.com/downloads/)
 
 ## How to run
 
@@ -12,8 +18,11 @@ It's a service that shows random quotes, allows to like them and show quote that
    cp .env.example .env && nano .env
    ```
 
+   1.1. Change envs in [Taskfile.yml](./Taskfile.yml) file
+
 2. Start the postgres database
    ```shell
+   export POSTGRES_ADDR=5432 POSTGRES_USER=postgres POSTGRES_PASSWORD=postgres POSTGRES_DB=quotes
    cd containers && docker-compose -f database.yml up -d && cd ..
    ```   
 
