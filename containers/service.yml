@@ -7,11 +7,11 @@ services:
     container_name: quote-local
     environment:
       SERVER_ADDRESS: "0.0.0.0:1140"
-      CORS_MAX_AGE: 300
-      SERVER_READ_HEADER_TIMEOUT: "10s"
-      POSTGRES_DSN: "host=db user=postgres password=postgres dbname=quotes port=5432 sslmode=disable"
-      POSTGRES_MIGRATION_PATH: "migrations"
-      RANDOM_QUOTE_CHANCE: 20
+      CORS_MAX_AGE: ${CORS_MAX_AGE}
+      SERVER_READ_HEADER_TIMEOUT: ${SERVER_READ_HEADER_TIMEOUT}
+      POSTGRES_DSN: "host=db user=${POSTGRES_USER} password=${POSTGRES_PASSWORD} dbname=${POSTGRES_DB} port=${POSTGRES_ADDR} sslmode=disable"
+      POSTGRES_MIGRATION_PATH: ${POSTGRES_MIGRATION_PATH}
+      RANDOM_QUOTE_CHANCE: ${RANDOM_QUOTE_CHANCE}
     ports:
-      - '1140:1140'
+      - '${SERVER_CONTAINER_PORT}:1140'
     restart: always

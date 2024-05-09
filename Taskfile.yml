@@ -1,11 +1,6 @@
 version: '3'
 
-env:
-  RUNNER: podman # Or you can use 'docker'
-  POSTGRES_USER: postgres
-  POSTGRES_PASSWORD: postgres
-  POSTGRES_DB: quotes
-  POSTGRES_ADDR: 5432
+dotenv: [".env"]
 
 tasks:
   run:
