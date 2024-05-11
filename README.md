@@ -18,8 +18,6 @@ It's a service that shows random quotes, allows to like them and show quote that
    cp .env.example .env && nano .env
    ```
 
-   1.1. Change envs in [Taskfile.yml](./Taskfile.yml) file
-
 2. Start the postgres database
 
    > **<span style="color:#79b6c9">ⓘ NOTE:</span>** If you're starting the program by running the taskfile command, you
