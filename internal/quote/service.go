@@ -4,8 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"math/rand"
-	"time"
+	"math/rand/v2"
 
 	"quote/config"
 	"quote/pkg/database"
@@ -76,7 +75,7 @@ func (s *Service) GetSameQuote(ctx context.Context, userID, quoteID string) (Quo
 		}
 	}
 
-	if err = s.db.MarkAsViewed(ctx, userID, quote.ID); err != nil {
+	if err = s.db.MarkAsViewed(ctx, userID, quoteID); err != nil {
 		return Quote{}, fmt.Errorf("failed to mark as viewed: %w", err)
 	}
 
@@ -92,9 +91,7 @@ func NewService(cfg *config.Config, db Database, api API) *Service {
 }
 
 func (s *Service) getQuote(ctx context.Context, quotes []database.Quote) (database.Quote, error) {
-	rnd := rand.New(rand.NewSource(time.Now().Unix()))
-	randomPercent := rnd.Float64() * oneHundredPercent
-
+	randomPercent := rand.Float64() * oneHundredPercent
 	if (oneHundredPercent-s.cfg.RandomQuoteChance) > randomPercent && len(quotes) > 0 {
 		var likes float64
 		for _, q := range quotes {

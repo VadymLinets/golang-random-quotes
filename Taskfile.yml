@@ -6,8 +6,7 @@ tasks:
   run:
     desc: Build and run the go binary. It will also start up the database.
     deps: [database-up]
-    cmds:
-      - go run main.go
+    cmd: go run main.go
 
   container-run:
     desc: Run application in the docker or podman container. It will also start up the database.
