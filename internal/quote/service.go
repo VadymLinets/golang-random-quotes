@@ -75,7 +75,7 @@ func (s *Service) GetSameQuote(ctx context.Context, userID, quoteID string) (Quo
 		}
 	}
 
-	if err = s.db.MarkAsViewed(ctx, userID, quoteID); err != nil {
+	if err = s.db.MarkAsViewed(ctx, userID, quote.ID); err != nil {
 		return Quote{}, fmt.Errorf("failed to mark as viewed: %w", err)
 	}
 
