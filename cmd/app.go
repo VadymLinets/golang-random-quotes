@@ -10,6 +10,7 @@ import (
 	"quote/internal/quoteapi"
 	"quote/pkg/database"
 	"quote/server"
+	"quote/server/graphql"
 	"quote/server/handlers"
 )
 
@@ -28,6 +29,7 @@ func Exec(cfg *config.Config) fx.Option {
 			fx.Annotate(quoteapi.NewService, fx.As(new(quote.API))),
 			quote.NewService,
 			heartbeat.NewService,
+			newGraphQLResolver,
 			handlers.NewHandler,
 			server.NewHTTPServer,
 		),
@@ -35,6 +37,13 @@ func Exec(cfg *config.Config) fx.Option {
 			prepareHooks,
 		),
 	)
+}
+
+func newGraphQLResolver(quotes *quote.Service, heartbeat *heartbeat.Service) *graphql.Resolver {
+	return &graphql.Resolver{
+		QuotesHandler:    quotes,
+		HeartbeatHandler: heartbeat,
+	}
 }
 
 func copyForAnnotation[T any](v *T) *T {

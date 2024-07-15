@@ -33,6 +33,11 @@ tasks:
     aliases: [dbd]
     cmd: bash -c "$RUNNER-compose -f database.yml down"
 
+  generate:
+    desc: Run go generate command.
+    aliases: [gen]
+    cmd: go generate ./...
+
   mockery:
     desc: Run mockery command for regenerate mocks
     aliases: [mock, mocks]

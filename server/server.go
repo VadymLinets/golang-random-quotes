@@ -6,9 +6,11 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/gin-gonic/gin"
 
 	"quote/config"
+	"quote/server/graphql"
 	"quote/server/handlers"
 	"quote/server/middlewares"
 )
@@ -18,10 +20,13 @@ type HTTPServer struct {
 
 	cfg      *config.ServerConfig
 	handlers *handlers.Handler
+	resolver *graphql.Resolver
 }
 
 func (s *HTTPServer) Start(_ context.Context) error {
 	gin.SetMode(gin.ReleaseMode)
+
+	srv := handler.NewDefaultServer(graphql.NewExecutableSchema(graphql.Config{Resolvers: s.resolver}))
 
 	router := gin.New()
 	router.Use(
@@ -37,6 +42,9 @@ func (s *HTTPServer) Start(_ context.Context) error {
 	router.GET("/", s.handlers.GetQuoteHandler)
 	router.GET("/same", s.handlers.GetSameQuoteHandler)
 	router.PATCH("/like", s.handlers.LikeQuoteHandler)
+
+	// GraphQL
+	router.POST("/graphql", gin.WrapH(srv))
 
 	s.server = &http.Server{
 		Addr:              s.cfg.Addr,
@@ -58,9 +66,10 @@ func (s *HTTPServer) Stop(ctx context.Context) error {
 	return s.server.Shutdown(ctx)
 }
 
-func NewHTTPServer(cfg *config.Config, handlers *handlers.Handler) *HTTPServer {
+func NewHTTPServer(cfg *config.Config, handlers *handlers.Handler, resolver *graphql.Resolver) *HTTPServer {
 	return &HTTPServer{
 		cfg:      &cfg.ServerConfig,
 		handlers: handlers,
+		resolver: resolver,
 	}
 }

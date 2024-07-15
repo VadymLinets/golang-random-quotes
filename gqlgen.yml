@@ -1,0 +1,18 @@
+schema:
+  - graphql/*.graphqls
+
+exec:
+  filename: server/graphql/graphql.go
+  package: graphql
+
+model:
+  filename: server/graphql/models.go
+  package: graphql
+
+resolver:
+  layout: follow-schema
+  dir: server/graphql
+  package: graphql
+  filename_template: "{name}.resolvers.go"
+
+autobind:
