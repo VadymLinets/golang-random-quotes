@@ -14,7 +14,15 @@ type Config struct {
 	QuotesConfig
 }
 
+type ServerType string
+
+const (
+	HTTP ServerType = "http"
+	GRPC ServerType = "grpc"
+)
+
 type ServerConfig struct {
+	Type              ServerType    `envconfig:"SERVER_TYPE" default:"http"`
 	Addr              string        `envconfig:"SERVER_ADDRESS"`
 	CorsMaxAge        int           `envconfig:"CORS_MAX_AGE" default:"300"`
 	ReadHeaderTimeout time.Duration `envconfig:"SERVER_READ_HEADER_TIMEOUT"`

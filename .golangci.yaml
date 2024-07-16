@@ -7,6 +7,10 @@ issues:
         - gosec
       text: "math/rand/v2 instead of crypto/rand"
       path: internal/quote/service.go
+    - linters:
+        - err113
+      text: "unsupported server type"
+      path: cmd/app.go
   exclude-dirs:
     - .idea
     - .git

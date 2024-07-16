@@ -78,5 +78,7 @@ func (r *Resolver) MutationHandler() MutationHandlerResolver { return &mutationH
 // QueryHandler returns QueryHandlerResolver implementation.
 func (r *Resolver) QueryHandler() QueryHandlerResolver { return &queryHandlerResolver{r} }
 
-type mutationHandlerResolver struct{ *Resolver }
-type queryHandlerResolver struct{ *Resolver }
+type (
+	mutationHandlerResolver struct{ *Resolver }
+	queryHandlerResolver    struct{ *Resolver }
+)

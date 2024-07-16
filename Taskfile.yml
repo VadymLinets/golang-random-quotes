@@ -1,46 +1,62 @@
 version: '3'
 
-dotenv: [".env"]
+dotenv: [ ".env" ]
 
 tasks:
+  init:
+    desc: Installs deps and creates .env file
+    cmds:
+      - go mod download
+      - cp .env.example .env
+
   run:
     desc: Build and run the go binary. It will also start up the database.
-    deps: [database-up]
+    deps: [ database-up ]
     cmd: go run main.go
 
   container-run:
     desc: Run application in the docker or podman container. It will also start up the database.
-    deps: [database-up]
+    deps: [ database-up ]
     dir: '{{.USER_WORKING_DIR}}/containers'
-    aliases: [crun]
+    aliases: [ crun ]
     cmd: bash -c "$RUNNER-compose -f service.yml up -d --no-deps --build"
 
   container-stop:
     desc: Stop docker or podman container with running application.
     dir: '{{.USER_WORKING_DIR}}/containers'
-    aliases: [cstop]
+    aliases: [ cstop ]
     cmd: bash -c "$RUNNER-compose -f service.yml down"
 
   database-up:
     desc: Create the database container throw docker or podman.
     dir: '{{.USER_WORKING_DIR}}/containers'
-    aliases: [db]
+    aliases: [ db ]
     cmd: bash -c "$RUNNER-compose -f database.yml up -d"
 
   database-down:
     desc: Drop the database container throw docker or podman.
     dir: '{{.USER_WORKING_DIR}}/containers'
-    aliases: [dbd]
+    aliases: [ dbd ]
     cmd: bash -c "$RUNNER-compose -f database.yml down"
 
-  generate:
-    desc: Run go generate command.
-    aliases: [gen]
-    cmd: go generate ./...
+  generate-graphql:
+    desc: Generate graphql files.
+    aliases: [ gg ]
+    cmds:
+      - go get -d github.com/99designs/gqlgen
+      - go run github.com/99designs/gqlgen
+
+  generate-proto:
+    desc: Generate protobuf files
+    aliases: [ gp ]
+    cmds:
+      - go install google.golang.org/protobuf/cmd/protoc-gen-go
+      - go get google.golang.org/grpc/cmd/protoc-gen-go-grpc && go install google.golang.org/grpc/cmd/protoc-gen-go-grpc
+      - protoc -I ./proto --go_out=./server/proto --go_opt=paths=source_relative --go-grpc_out=./server/proto --go-grpc_opt=paths=source_relative ./proto/*.proto
 
   mockery:
     desc: Run mockery command for regenerate mocks
-    aliases: [mock, mocks]
+    aliases: [ mock, mocks ]
     cmds:
       - go install github.com/vektra/mockery/v2@latest
       - rm -rf ./test/mocks
@@ -52,7 +68,7 @@ tasks:
 
   format:
     desc: Auto formating golang code
-    aliases: [f]
+    aliases: [ f ]
     cmds:
       - go install mvdan.cc/gofumpt@latest
       - go install github.com/daixiang0/gci@latest
@@ -62,7 +78,7 @@ tasks:
 
   upgrade-libraries:
     desc: Upgrades all libraries that used on the project
-    aliases: [upgr]
+    aliases: [ upgr ]
     cmds:
       - go get -u ./...
       - go mod tidy

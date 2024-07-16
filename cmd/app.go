@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/go-resty/resty/v2"
 	"go.uber.org/fx"
 
@@ -11,6 +13,7 @@ import (
 	"quote/pkg/database"
 	"quote/server"
 	"quote/server/graphql"
+	grpcHandlers "quote/server/grpc_handlers"
 	"quote/server/handlers"
 )
 
@@ -31,10 +34,11 @@ func Exec(cfg *config.Config) fx.Option {
 			heartbeat.NewService,
 			newGraphQLResolver,
 			handlers.NewHandler,
-			server.NewHTTPServer,
+			grpcHandlers.NewHandler,
 		),
 		fx.Invoke(
 			prepareHooks,
+			startServer,
 		),
 	)
 }
@@ -54,10 +58,32 @@ type hooks struct {
 	fx.In
 
 	Database *database.Postgres
-	Server   *server.HTTPServer
 }
 
-func prepareHooks(lc fx.Lifecycle, hooks hooks) {
-	lc.Append(fx.Hook{OnStart: hooks.Database.Start, OnStop: hooks.Database.Stop})
-	lc.Append(fx.Hook{OnStart: hooks.Server.Start, OnStop: hooks.Server.Stop})
+func prepareHooks(lc fx.Lifecycle, in hooks) {
+	lc.Append(fx.Hook{OnStart: in.Database.Start, OnStop: in.Database.Stop})
+}
+
+type srv struct {
+	fx.In
+
+	Cfg          *config.Config
+	Handlers     *handlers.Handler
+	GrpcHandlers *grpcHandlers.Handler
+	Resolver     *graphql.Resolver
+}
+
+func startServer(lc fx.Lifecycle, in srv) error {
+	switch in.Cfg.Type {
+	case config.HTTP:
+		http := server.NewHTTPServer(in.Cfg, in.Handlers, in.Resolver)
+		lc.Append(fx.Hook{OnStart: http.Start, OnStop: http.Stop})
+	case config.GRPC:
+		grpc := server.NewGRPCServer(in.Cfg, in.GrpcHandlers)
+		lc.Append(fx.Hook{OnStart: grpc.Start, OnStop: grpc.Stop})
+	default:
+		return fmt.Errorf("unsupported server type: %s", in.Cfg.Type)
+	}
+
+	return nil
 }

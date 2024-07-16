@@ -59,6 +59,7 @@ func runEssentials(t *testing.T) (*config.Config, *database.Postgres) {
 
 	cfg := &config.Config{
 		ServerConfig: config.ServerConfig{
+			Type:              config.HTTP,
 			Addr:              "0.0.0.0:1141",
 			CorsMaxAge:        corsMaxAge,
 			ReadHeaderTimeout: time.Second,
