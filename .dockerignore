@@ -112,4 +112,4 @@ Taskfile.yml
 .run
 .git
 containers
-postman
+requests
