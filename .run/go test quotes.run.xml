@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="go test quotes" type="GoTestRunConfiguration" factoryName="Go Test" nameIsGenerated="true">
-    <module name="quotes" />
+    <module name="quotes-go" />
     <working_directory value="$PROJECT_DIR$" />
     <kind value="DIRECTORY" />
     <package value="basic-go" />
