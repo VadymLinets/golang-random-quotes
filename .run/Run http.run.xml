@@ -1,7 +1,10 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Run" type="GoApplicationRunConfiguration" factoryName="Go Application">
+  <configuration default="false" name="Run http" type="GoApplicationRunConfiguration" factoryName="Go Application">
     <module name="quotes" />
     <working_directory value="$PROJECT_DIR$" />
+    <envs>
+      <env name="SERVER_TYPE" value="http" />
+    </envs>
     <kind value="PACKAGE" />
     <package value="quote" />
     <directory value="$PROJECT_DIR$" />

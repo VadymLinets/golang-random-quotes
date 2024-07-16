@@ -51,7 +51,7 @@ It's a service that shows random quotes, allows to like them and show quote that
     go run main.go
     ```
 
-   Or you can run `Run` configuration if you are using `Goland`
+   Or you can run `Run http` configuration if you are using `Goland`
 
    Or you can run the following taskfile command:
     ```shell
