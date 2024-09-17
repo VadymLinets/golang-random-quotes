@@ -88,3 +88,8 @@ tasks:
     cmds:
       - go install github.com/mfridman/tparse@latest
       - go test -v ./... -race -cover -json | tparse -all
+
+  test-maelstrom:
+    desc: Run all tests throw maelstrom
+    aliases: [ testm ]
+    cmd: maelstrom-go-test

@@ -9,6 +9,7 @@ It's a service that shows random quotes, allows to like them and show quote that
 1. [Taskfile](https://taskfile.dev/installation/) (Optional)
 2. docker-compose or podman-compose
 3. [Postman](https://www.postman.com/downloads/) or [Yaak](https://yaak.app/download)
+4. [maelstrom-go-test](https://maelstrom-software.com/doc/book/latest/installation.html) (Optional)
 
 ## How to run
 

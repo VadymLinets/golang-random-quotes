@@ -1,0 +1,28 @@
+[[directives]]
+include_shared_libraries = true
+network = "loopback"
+enable_writable_file_system = false
+working_directory = "/"
+user = 0
+group = 0
+
+layers = [
+    { stubs = [ "/{proc,tmp}/"] }
+]
+
+mounts = [
+    { type = "tmp", mount_point = "/tmp" },
+    { type = "proc", mount_point = "/proc" },
+]
+
+
+[[directives]]
+filter = "name.equals(TestIntegration)"
+enable_writable_file_system = true
+network = "local"
+added_layers = [{ stubs = [ "/var/run/docker.sock" ] }, { stubs = [ "/migrations/" ] }]
+added_mounts = [
+    { type = "bind", mount_point = "/var/run/docker.sock", local_path = "/var/run/docker.sock", read_only = false },
+    { type = "bind", mount_point = "/migrations", local_path = "migrations", read_only = false }
+]
+added_environment = { RUNS_IN_CONTAINER = "true" }

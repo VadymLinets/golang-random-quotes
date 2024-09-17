@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"testing"
 	"time"
 
@@ -27,14 +28,15 @@ const (
 
 func runEssentials(t *testing.T) (*config.Config, *database.Postgres) {
 	t.Helper()
+	t.Setenv("TESTCONTAINERS_RYUK_DISABLED", "true")
 
 	ctx := context.Background()
 	dbName := "test_quotes"
 	dbUser := "postgres"
 	dbPassword := "postgres"
 
-	postgresContainer, err := postgres.RunContainer(ctx,
-		testcontainers.WithImage("docker.io/postgres:16-alpine"),
+	postgresContainer, err := postgres.Run(ctx,
+		"docker.io/postgres:latest",
 		postgres.WithDatabase(dbName),
 		postgres.WithUsername(dbUser),
 		postgres.WithPassword(dbPassword),
@@ -50,11 +52,21 @@ func runEssentials(t *testing.T) (*config.Config, *database.Postgres) {
 		}
 	})
 
-	port := ""
-	ports, err := postgresContainer.Ports(ctx)
-	for _, v := range ports {
-		port = v[0].HostPort
-		break
+	host := "localhost"
+	port := "5432"
+	migrations := "../migrations"
+
+	if os.Getenv("RUNS_IN_CONTAINER") == "true" {
+		migrations = "/migrations"
+		host, err = postgresContainer.ContainerIP(ctx)
+		require.NoError(t, err)
+	} else {
+		ports, err := postgresContainer.Ports(ctx)
+		require.NoError(t, err)
+		for _, v := range ports {
+			port = v[0].HostPort
+			break
+		}
 	}
 
 	cfg := &config.Config{
@@ -65,8 +77,8 @@ func runEssentials(t *testing.T) (*config.Config, *database.Postgres) {
 			ReadHeaderTimeout: time.Second,
 		},
 		PostgresConfig: config.PostgresConfig{
-			DSN:           fmt.Sprintf("host=localhost user=postgres password=postgres dbname=test_quotes port=%s sslmode=disable", port),
-			MigrationPath: "../migrations",
+			DSN:           fmt.Sprintf("host=%s user=postgres password=postgres dbname=test_quotes port=%s sslmode=disable", host, port),
+			MigrationPath: migrations,
 		},
 		QuotesConfig: config.QuotesConfig{
 			RandomQuoteChance: 0,

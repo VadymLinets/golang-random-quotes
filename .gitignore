@@ -19,6 +19,7 @@
 # Container files
 tmp
 .localstack
+.maelstrom-go-test
 
 # Local files
 .env
