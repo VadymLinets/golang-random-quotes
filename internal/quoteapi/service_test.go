@@ -15,7 +15,7 @@ import (
 )
 
 var testQuote = RandomQuote{
-	ID:      gofakeit.UUID(),
+	ID:      gofakeit.IntRange(1, 1000),
 	Content: gofakeit.Quote(),
 	Author:  gofakeit.Name(),
 	Tags:    gofakeit.NiceColors(),
