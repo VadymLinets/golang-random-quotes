@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	randomQuoteURL = "https://api.quotable.io/random"
+	randomQuoteURL = "https://dummyjson.com/quotes/random"
 )
 
 type Service struct {
