@@ -36,11 +36,13 @@ Get quote: {
   List of unviewed quotes is empty or choosed new quote: {
     quotes_service -> quotes_api_service: Get new quote from api
     quotes_api_service -> repository: Save new quote
+    repository -> quotes_api_service: New quote saved
     quotes_api_service -> quotes_service: Return new quote
     quotes_service -> quotes_service: Return new quote
   }
 
   quotes_service -> repository: Mark quote as viewed
+  repository -> quotes_service: Quote marked as viewed
   quotes_service -> server: Return quote
   server -> user: Return quote
 }
@@ -60,7 +62,9 @@ Like quote: {
 
   Quote is not liked: {
     quotes_service -> repository: Like quote
+    repository -> quotes_service: Quote liked
     quotes_service -> repository: Mark quote as liked
+    repository -> quotes_service: Quote marked as liked
   }
 
   quotes_service -> server: Quote liked
@@ -86,10 +90,12 @@ Get same quote: {
   There is no same quote: {
     quotes_service -> quotes_api_service: Get new quote from api
     quotes_api_service -> repository: Save new quote
+    repository -> quotes_api_service: New quote saved
     quotes_api_service -> quotes_service: Return new quote
   }
 
   quotes_service -> repository: Mark quote as viewed
+  repository -> quotes_service: Quote marked as viewed
   quotes_service -> server: Return same quote
   server -> user: Return same quote
 }
