@@ -19,44 +19,45 @@ tasks:
     deps: [ database-up ]
     dir: '{{.USER_WORKING_DIR}}/containers'
     aliases: [ crun ]
-    cmd: bash -c "$RUNNER-compose -f service.yml up -d --no-deps --build"
+    cmd: bash -c "$RUNNER compose -f service.yml up -d --no-deps --build"
 
   container-stop:
     desc: Stop docker or podman container with running application.
     dir: '{{.USER_WORKING_DIR}}/containers'
     aliases: [ cstop ]
-    cmd: bash -c "$RUNNER-compose -f service.yml down"
+    cmd: bash -c "$RUNNER compose -f service.yml down"
 
   database-up:
     desc: Create the database container throw docker or podman.
     dir: '{{.USER_WORKING_DIR}}/containers'
     aliases: [ db ]
-    cmd: bash -c "$RUNNER-compose -f database.yml up -d"
+    cmd: bash -c "$RUNNER compose -f database.yml up -d"
 
   database-down:
     desc: Drop the database container throw docker or podman.
     dir: '{{.USER_WORKING_DIR}}/containers'
     aliases: [ dbd ]
-    cmd: bash -c "$RUNNER-compose -f database.yml down"
+    cmd: bash -c "$RUNNER compose -f database.yml down"
 
   generate-graphql:
     desc: Generate graphql files.
     aliases: [ gg ]
     cmds:
-      - go get -d github.com/99designs/gqlgen
+      - go get github.com/99designs/gqlgen
       - go run github.com/99designs/gqlgen
 
   generate-proto:
     desc: Generate protobuf files
     aliases: [ gp ]
     cmds:
-      - go install google.golang.org/protobuf/cmd/protoc-gen-go
+      - go get google.golang.org/protobuf/cmd/protoc-gen-go && go install google.golang.org/protobuf/cmd/protoc-gen-go
       - go get google.golang.org/grpc/cmd/protoc-gen-go-grpc && go install google.golang.org/grpc/cmd/protoc-gen-go-grpc
-      - protoc -I ./proto --go_out=./server/proto --go_opt=paths=source_relative --go-grpc_out=./server/proto --go-grpc_opt=paths=source_relative ./proto/*.proto
+      - go install github.com/bufbuild/buf/cmd/buf@latest
+      - buf generate
 
   mockery:
     desc: Run mockery command for regenerate mocks
-    aliases: [ mock, mocks ]
+    aliases: [ mock ]
     cmds:
       - go install github.com/vektra/mockery/v2@latest
       - rm -rf ./test/mocks
@@ -68,13 +69,15 @@ tasks:
 
   format:
     desc: Auto formating golang code
-    aliases: [ f ]
+    aliases: [ fmt ]
     cmds:
       - go install mvdan.cc/gofumpt@latest
       - go install github.com/daixiang0/gci@latest
+      - go install github.com/bufbuild/buf/cmd/buf@latest
       - go mod tidy
       - gofumpt -l -w .
       - gci write --skip-generated -s standard -s default -s "prefix(quote)" -s blank -s dot .
+      - buf format -w
 
   upgrade-libraries:
     desc: Upgrades all libraries that used on the project

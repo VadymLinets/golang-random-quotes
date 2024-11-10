@@ -1,0 +1,24 @@
+version: v2
+clean: true
+managed:
+  enabled: true
+  override:
+    - file_option: go_package
+      value: /proto
+plugins:
+  - local: ["go", "run", "google.golang.org/protobuf/cmd/protoc-gen-go"]
+    out: server/proto
+    opt:
+      - paths=source_relative
+    strategy: all
+    include_imports: true
+    include_wkt: true
+  - local: ["go", "run", "google.golang.org/grpc/cmd/protoc-gen-go-grpc"]
+    out: server/proto
+    opt:
+      - paths=source_relative
+    strategy: all
+    include_imports: true
+    include_wkt: true
+inputs:
+  - directory: proto

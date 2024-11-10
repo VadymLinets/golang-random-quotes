@@ -25,7 +25,6 @@ linters:
     - containedctx
     - cyclop
     - depguard
-    - execinquery
     - exhaustruct
     - exportloopref
     - funlen
@@ -37,7 +36,6 @@ linters:
     - godox
     - gofumpt
     - goimports
-    - gomnd
     - gomodguard
     - goprintffuncname
     - ireturn
