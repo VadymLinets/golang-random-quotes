@@ -2,6 +2,8 @@ package quote
 
 import "quote/pkg/database"
 
+const oneHundredPercent float64 = 100
+
 type Quote struct {
 	ID     string   `json:"id"`
 	Quote  string   `json:"quote"`

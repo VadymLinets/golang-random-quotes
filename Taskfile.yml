@@ -96,3 +96,8 @@ tasks:
     desc: Run all tests throw maelstrom
     aliases: [ testm ]
     cmd: maelstrom-go-test
+
+  test-mutation:
+    desc: Run mutation tests
+    aliases: [ tmut ]
+    cmd: go test -v -failfast -tags=mutation ./test/mutation_test.go

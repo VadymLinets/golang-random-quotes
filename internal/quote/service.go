@@ -4,13 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"math/rand/v2"
 
 	"quote/config"
 	"quote/pkg/database"
+	"quote/tools"
 )
-
-const oneHundredPercent float64 = 100
 
 type Service struct {
 	cfg *config.QuotesConfig
@@ -24,7 +22,7 @@ func (s *Service) GetQuote(ctx context.Context, userID string) (Quote, error) {
 		return Quote{}, fmt.Errorf("failed to get quotes: %w", err)
 	}
 
-	quote, err := s.getQuote(ctx, quotes)
+	quote, err := s.chooseQuote(ctx, quotes, tools.RandomPercent(oneHundredPercent))
 	if err != nil {
 		return Quote{}, fmt.Errorf("failed to get random quote: %w", err)
 	}
@@ -90,17 +88,19 @@ func NewService(cfg *config.Config, db Database, api API) *Service {
 	}
 }
 
-func (s *Service) getQuote(ctx context.Context, quotes []database.Quote) (database.Quote, error) {
-	randomPercent := rand.Float64() * oneHundredPercent
-	if (oneHundredPercent-s.cfg.RandomQuoteChance) > randomPercent && len(quotes) > 0 {
-		var likes float64
-		for _, q := range quotes {
-			if q.Likes == 0 {
-				q.Likes++
+func (s *Service) chooseQuote(ctx context.Context, quotes []database.Quote, randomPercent float64) (database.Quote, error) {
+	if len(quotes) == 0 {
+		return s.api.GetRandomQuote(ctx)
+	}
+
+	if (oneHundredPercent - s.cfg.RandomQuoteChance) > randomPercent {
+		likes := tools.Sum(quotes, func(quote database.Quote) float64 {
+			if quote.Likes == 0 {
+				quote.Likes++
 			}
 
-			likes += float64(q.Likes)
-		}
+			return float64(quote.Likes)
+		})
 
 		var accumulator float64
 		del := likes * oneHundredPercent / (oneHundredPercent - s.cfg.RandomQuoteChance)
