@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"testing"
 
 	"github.com/brianvoe/gofakeit/v6"
@@ -27,6 +28,10 @@ var (
 )
 
 func TestIntegration(t *testing.T) {
+	if os.Getenv("MUTATION_TESTING") != "" {
+		t.Skip("Skipping testing for mutation tests")
+	}
+
 	client := resty.New()
 	cfg, db := runEssentials(t)
 

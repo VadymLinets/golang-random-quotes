@@ -6,11 +6,15 @@ issues:
     - linters:
         - gosec
       text: "math/rand/v2 instead of crypto/rand"
-      path: internal/quote/service.go
+      path: tools/common.go
     - linters:
         - err113
       text: "unsupported server type"
       path: cmd/app.go
+    - linters:
+        - tenv
+      text: "can be replaced"
+      path: test/mutation_test.go
   exclude-dirs:
     - .idea
     - .git
