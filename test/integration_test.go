@@ -29,7 +29,7 @@ var (
 
 func TestIntegration(t *testing.T) {
 	if os.Getenv("MUTATION_TESTING") != "" {
-		t.Skip("Skipping testing for mutation tests")
+		t.Skip("Skipping integration testing for mutation tests")
 	}
 
 	client := resty.New()
