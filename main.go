@@ -3,7 +3,7 @@ package main
 import (
 	"go.uber.org/fx"
 
-	"quote/cmd"
+	"quote/app"
 	"quote/config"
 )
 
@@ -13,5 +13,5 @@ func main() {
 		panic(err)
 	}
 
-	fx.New(cmd.Exec(cfg)).Run()
+	fx.New(app.Exec(cfg)).Run()
 }

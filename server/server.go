@@ -26,7 +26,7 @@ type HTTPServer struct {
 func (s *HTTPServer) Start(_ context.Context) error {
 	gin.SetMode(gin.ReleaseMode)
 
-	srv := handler.NewDefaultServer(graphql.NewExecutableSchema(graphql.Config{Resolvers: s.resolver}))
+	srv := handler.New(graphql.NewExecutableSchema(graphql.Config{Resolvers: s.resolver}))
 
 	router := gin.New()
 	router.Use(

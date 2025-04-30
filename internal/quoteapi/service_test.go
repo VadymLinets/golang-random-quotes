@@ -1,7 +1,6 @@
 package quoteapi
 
 import (
-	"context"
 	"net/http"
 	"testing"
 
@@ -29,7 +28,7 @@ func TestGetRandomQuote_Success(t *testing.T) {
 	httpmock.RegisterResponder(http.MethodGet, randomQuoteURL, responder)
 	db.EXPECT().SaveQuote(mock.Anything, testQuote.toDatabase()).Return(nil)
 
-	quote, err := svc.GetRandomQuote(context.Background())
+	quote, err := svc.GetRandomQuote(t.Context())
 	require.NoError(t, err)
 	require.Equal(t, testQuote.toDatabase(), quote)
 }

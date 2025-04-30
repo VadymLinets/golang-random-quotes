@@ -59,7 +59,6 @@ tasks:
     desc: Run mockery command for regenerate mocks
     aliases: [ mock ]
     cmds:
-      - go install github.com/vektra/mockery/v2@latest
       - rm -rf ./test/mocks
       - mockery --config=.mockery.yaml
 
@@ -71,9 +70,6 @@ tasks:
     desc: Auto formating golang code
     aliases: [ fmt ]
     cmds:
-      - go install mvdan.cc/gofumpt@latest
-      - go install github.com/daixiang0/gci@latest
-      - go install github.com/bufbuild/buf/cmd/buf@latest
       - go mod tidy
       - gofumpt -l -w .
       - gci write --skip-generated -s standard -s default -s "prefix(quote)" -s blank -s dot .
@@ -83,21 +79,15 @@ tasks:
     desc: Upgrades all libraries that used on the project
     aliases: [ upgr ]
     cmds:
+      - go get -u go
       - go get -u ./...
       - go mod tidy
 
   test:
     desc: Run all tests
-    cmds:
-      - go install github.com/mfridman/tparse@latest
-      - go test -v ./... -race -cover -json | tparse -all
-
-  test-maelstrom:
-    desc: Run all tests throw maelstrom
-    aliases: [ testm ]
-    cmd: maelstrom-go-test
+    cmd: go test -v ./... -race -cover -json | tparse -all
 
   test-mutation:
     desc: Run mutation tests
-    aliases: [ tmut ]
+    aliases: [ mtest ]
     cmd: go test -v -failfast -tags=mutation ./test/mutation_test.go

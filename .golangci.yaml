@@ -1,55 +1,102 @@
-run:
-  concurrency: 6
+version: "2"
 
-issues:
-  exclude-rules:
-    - linters:
-        - gosec
-      text: "math/rand/v2 instead of crypto/rand"
-      path: tools/common.go
-    - linters:
-        - err113
-      text: "unsupported server type"
-      path: cmd/app.go
-    - linters:
-        - tenv
-      text: "can be replaced"
-      path: test/mutation_test.go
-  exclude-dirs:
-    - .idea
-    - .git
-    - .run
-    - containers
-    - migrations
-    - postman
+run:
+  concurrency: 4
+  modules-download-mode: readonly
+  issues-exit-code: 1
+  tests: true
 
 linters:
-  enable-all: true
+  default: all
   disable:
     - containedctx
+    - contextcheck
+    - copyloopvar
     - cyclop
     - depguard
+    - dogsled
+    - exhaustive
     - exhaustruct
-    - exportloopref
+    - forbidigo
+    - funcorder
     - funlen
-    - gci
     - gochecknoglobals
     - gochecknoinits
     - gocognit
     - gocyclo
     - godox
-    - gofumpt
-    - goimports
     - gomodguard
     - goprintffuncname
+    - intrange
     - ireturn
     - lll
+    - musttag
+    - nilnil
     - nlreturn
     - nonamedreturns
     - paralleltest
+    - perfsprint
     - tagalign
     - tagliatelle
     - testpackage
     - varnamelen
     - wrapcheck
     - wsl
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      - linters:
+          - gosec
+        path: tools/common.go
+        text: Use of weak random number generator
+      - linters:
+          - err113
+        path: ((.+)/test/(.+)\.go|(.+)_test\.go)
+        text: do not define dynamic errors, use wrapped static errors instead
+    paths:
+      - .git
+      - .idea
+      - .run
+      - .watchers
+      - containers
+      - docs
+      - graphql
+      - migrations
+      - proto
+      - requests
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  enable:
+    - gci
+  settings:
+    gci:
+      sections:
+        - standard
+        - default
+        - prefix(quote)
+        - blank
+        - dot
+      custom-order: true
+  exclusions:
+    generated: lax
+    paths:
+      - .git
+      - .idea
+      - .run
+      - .watchers
+      - containers
+      - docs
+      - graphql
+      - migrations
+      - proto
+      - requests
+      - third_party$
+      - builtin$
+      - examples$

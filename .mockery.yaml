@@ -1,15 +1,15 @@
 # Parameters doc: https://vektra.github.io/mockery/latest/configuration/#parameter-descriptions
-disable-version-string: True
-with-expecter: True
-outpkg: mocks
 dir: test/mocks
-filename: "{{.PackageName}}_{{.InterfaceName | snakecase }}.go"
-mockname: "{{.PackageName | camelcase }}{{.InterfaceName | camelcase }}"
+filename: "{{.SrcPackageName}}_{{.InterfaceName | snakecase }}.go"
+structname: '{{.SrcPackageName | firstUpper }}{{.InterfaceName}}'
+pkgname: mocks
+template: testify
+force-file-write: true
 packages:
   quote/internal/quote:
     interfaces:
-      Database:
-      API:
+      Database: {}
+      API: {}
   quote/internal/quoteapi:
     interfaces:
-      Database:
+      Database: {}

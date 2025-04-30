@@ -1,7 +1,6 @@
 package quote
 
 import (
-	"context"
 	"testing"
 
 	"github.com/brianvoe/gofakeit/v6"
@@ -28,7 +27,7 @@ func TestGetQuote_Success(t *testing.T) {
 	db.EXPECT().GetQuotes(mock.Anything, testUserID).Return([]database.Quote{testQuote}, nil)
 	db.EXPECT().MarkAsViewed(mock.Anything, testUserID, testQuote.ID).Return(nil)
 
-	receivedQuote, err := svc.GetQuote(context.Background(), testUserID)
+	receivedQuote, err := svc.GetQuote(t.Context(), testUserID)
 	require.NoError(t, err)
 	require.Equal(t, fromDatabaseQuoteToQuote(testQuote), receivedQuote)
 }
@@ -41,7 +40,7 @@ func TestGetQuote_Random(t *testing.T) {
 	db.EXPECT().MarkAsViewed(mock.Anything, testUserID, testQuote.ID).Return(nil)
 	api.EXPECT().GetRandomQuote(mock.Anything).Return(testQuote, nil)
 
-	receivedQuote, err := svc.GetQuote(context.Background(), testUserID)
+	receivedQuote, err := svc.GetQuote(t.Context(), testUserID)
 	require.NoError(t, err)
 	require.Equal(t, fromDatabaseQuoteToQuote(testQuote), receivedQuote)
 }
@@ -52,7 +51,7 @@ func TestGetQuote_NoQuotes(t *testing.T) {
 	db.EXPECT().MarkAsViewed(mock.Anything, testUserID, testQuote.ID).Return(nil)
 	api.EXPECT().GetRandomQuote(mock.Anything).Return(testQuote, nil)
 
-	receivedQuote, err := svc.GetQuote(context.Background(), testUserID)
+	receivedQuote, err := svc.GetQuote(t.Context(), testUserID)
 	require.NoError(t, err)
 	require.Equal(t, fromDatabaseQuoteToQuote(testQuote), receivedQuote)
 }
@@ -65,7 +64,7 @@ func TestLikeQuote_Success(t *testing.T) {
 	db.EXPECT().LikeQuote(mock.Anything, testQuote.ID).Return(nil)
 	db.EXPECT().MarkAsLiked(mock.Anything, testUserID, testQuote.ID).Return(nil)
 
-	err := svc.LikeQuote(context.Background(), testUserID, testQuote.ID)
+	err := svc.LikeQuote(t.Context(), testUserID, testQuote.ID)
 	require.NoError(t, err)
 }
 
@@ -75,7 +74,7 @@ func TestLikeQuote_AlreadyLiked(t *testing.T) {
 	svc, db, _ := newTestService(t, &config.Config{})
 	db.EXPECT().GetView(mock.Anything, testUserID, testQuote.ID).Return(view, nil)
 
-	err := svc.LikeQuote(context.Background(), testUserID, testQuote.ID)
+	err := svc.LikeQuote(t.Context(), testUserID, testQuote.ID)
 	require.NoError(t, err)
 }
 
@@ -85,7 +84,7 @@ func TestGetSameQuote_Success(t *testing.T) {
 	db.EXPECT().GetSameQuote(mock.Anything, testUserID, testQuote).Return(testQuote, nil)
 	db.EXPECT().MarkAsViewed(mock.Anything, testUserID, testQuote.ID).Return(nil)
 
-	sameQuote, err := svc.GetSameQuote(context.Background(), testUserID, testQuote.ID)
+	sameQuote, err := svc.GetSameQuote(t.Context(), testUserID, testQuote.ID)
 	require.NoError(t, err)
 	require.Equal(t, fromDatabaseQuoteToQuote(testQuote), sameQuote)
 }
@@ -97,7 +96,7 @@ func TestGetSameQuote_Random(t *testing.T) {
 	db.EXPECT().MarkAsViewed(mock.Anything, testUserID, testQuote.ID).Return(nil)
 	api.EXPECT().GetRandomQuote(mock.Anything).Return(testQuote, nil)
 
-	sameQuote, err := svc.GetSameQuote(context.Background(), testUserID, testQuote.ID)
+	sameQuote, err := svc.GetSameQuote(t.Context(), testUserID, testQuote.ID)
 	require.NoError(t, err)
 	require.Equal(t, fromDatabaseQuoteToQuote(testQuote), sameQuote)
 }
@@ -129,15 +128,15 @@ func TestChooseQuote_Success(t *testing.T) {
 
 	svc, _, _ := newTestService(t, &config.Config{})
 
-	q, err := svc.chooseQuote(context.Background(), []database.Quote{quote1, quote2, quote3}, 10)
+	q, err := svc.chooseQuote(t.Context(), []database.Quote{quote1, quote2, quote3}, 10)
 	require.NoError(t, err)
 	require.Equal(t, quote1, q)
 
-	q, err = svc.chooseQuote(context.Background(), []database.Quote{quote1, quote2, quote3}, 80)
+	q, err = svc.chooseQuote(t.Context(), []database.Quote{quote1, quote2, quote3}, 80)
 	require.NoError(t, err)
 	require.Equal(t, quote2, q)
 
-	q, err = svc.chooseQuote(context.Background(), []database.Quote{quote1, quote2, quote3}, 99)
+	q, err = svc.chooseQuote(t.Context(), []database.Quote{quote1, quote2, quote3}, 99)
 	require.NoError(t, err)
 	require.Equal(t, quote3, q)
 }
@@ -159,11 +158,11 @@ func TestChooseQuote_ZeroLikes(t *testing.T) {
 
 	svc, _, _ := newTestService(t, &config.Config{})
 
-	q1, err := svc.chooseQuote(context.Background(), []database.Quote{quote1, quote2}, 0)
+	q1, err := svc.chooseQuote(t.Context(), []database.Quote{quote1, quote2}, 0)
 	require.NoError(t, err)
 	require.Equal(t, quote1, q1)
 
-	q2, err := svc.chooseQuote(context.Background(), []database.Quote{quote1, quote2}, 51)
+	q2, err := svc.chooseQuote(t.Context(), []database.Quote{quote1, quote2}, 51)
 	require.NoError(t, err)
 	require.Equal(t, quote2, q2)
 }
@@ -188,30 +187,30 @@ func TestChooseQuote_Random(t *testing.T) {
 	svc, _, api := newTestService(t, &config.Config{QuotesConfig: config.QuotesConfig{RandomQuoteChance: 1}})
 	api.EXPECT().GetRandomQuote(mock.Anything).Return(testQuote, nil)
 
-	q, err := svc.chooseQuote(context.Background(), []database.Quote{quote1, quote2}, 99)
+	q, err := svc.chooseQuote(t.Context(), []database.Quote{quote1, quote2}, 99)
 	require.NoError(t, err)
 	require.Equal(t, testQuote, q)
 
-	q, err = svc.chooseQuote(context.Background(), []database.Quote{quote1, quote2}, 98)
+	q, err = svc.chooseQuote(t.Context(), []database.Quote{quote1, quote2}, 98)
 	require.NoError(t, err)
 	require.Equal(t, quote2, q)
 
-	q, err = svc.chooseQuote(context.Background(), []database.Quote{quote1, quote2}, 21)
+	q, err = svc.chooseQuote(t.Context(), []database.Quote{quote1, quote2}, 21)
 	require.NoError(t, err)
 	require.Equal(t, quote1, q)
 
 	svc, _, api = newTestService(t, &config.Config{QuotesConfig: config.QuotesConfig{RandomQuoteChance: 98}})
 	api.EXPECT().GetRandomQuote(mock.Anything).Return(testQuote, nil)
 
-	q, err = svc.chooseQuote(context.Background(), []database.Quote{quote1, quote2}, 60)
+	q, err = svc.chooseQuote(t.Context(), []database.Quote{quote1, quote2}, 60)
 	require.NoError(t, err)
 	require.Equal(t, testQuote, q)
 
-	q, err = svc.chooseQuote(context.Background(), []database.Quote{quote1, quote2}, 1.9)
+	q, err = svc.chooseQuote(t.Context(), []database.Quote{quote1, quote2}, 1.9)
 	require.NoError(t, err)
 	require.Equal(t, quote2, q)
 
-	q, err = svc.chooseQuote(context.Background(), []database.Quote{quote1, quote2}, 0)
+	q, err = svc.chooseQuote(t.Context(), []database.Quote{quote1, quote2}, 0)
 	require.NoError(t, err)
 	require.Equal(t, quote1, q)
 }
@@ -220,11 +219,11 @@ func TestChooseQuote_EmptyList(t *testing.T) {
 	svc, _, api := newTestService(t, &config.Config{})
 	api.EXPECT().GetRandomQuote(mock.Anything).Return(testQuote, nil)
 
-	q, err := svc.chooseQuote(context.Background(), []database.Quote{}, 19)
+	q, err := svc.chooseQuote(t.Context(), []database.Quote{}, 19)
 	require.NoError(t, err)
 	require.Equal(t, testQuote, q)
 
-	q, err = svc.chooseQuote(context.Background(), []database.Quote{}, 0)
+	q, err = svc.chooseQuote(t.Context(), []database.Quote{}, 0)
 	require.NoError(t, err)
 	require.Equal(t, testQuote, q)
 }

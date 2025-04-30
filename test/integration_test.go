@@ -1,7 +1,6 @@
 package test
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -35,7 +34,7 @@ func TestIntegration(t *testing.T) {
 	client := resty.New()
 	cfg, db := runEssentials(t)
 
-	err := db.SaveQuote(context.Background(), testQuote)
+	err := db.SaveQuote(t.Context(), testQuote)
 	require.NoError(t, err)
 
 	getQuote(t, cfg, client, db)
@@ -64,7 +63,7 @@ func getQuote(t *testing.T, cfg *config.Config, client *resty.Client, db *databa
 		Tags:   testQuote.Tags,
 	}, q)
 
-	dbq, err := db.GetQuote(context.Background(), testQuote.ID)
+	dbq, err := db.GetQuote(t.Context(), testQuote.ID)
 	require.NoError(t, err)
 	require.Equal(t, testQuote, dbq)
 }
@@ -81,7 +80,7 @@ func likeQuote(t *testing.T, cfg *config.Config, client *resty.Client, db *datab
 	require.NoError(t, err)
 	require.Equal(t, http.StatusOK, resp.StatusCode())
 
-	q, err := db.GetQuote(context.Background(), testQuote.ID)
+	q, err := db.GetQuote(t.Context(), testQuote.ID)
 	require.NoError(t, err)
 	require.Equal(t, int64(1), q.Likes)
 }
@@ -103,10 +102,10 @@ func getSameQuote(t *testing.T, cfg *config.Config, client *resty.Client, db *da
 		Tags:   gofakeit.NiceColors(),
 	}
 
-	err := db.SaveQuote(context.Background(), sameQuote)
+	err := db.SaveQuote(t.Context(), sameQuote)
 	require.NoError(t, err)
 
-	err = db.SaveQuote(context.Background(), randomQuote)
+	err = db.SaveQuote(t.Context(), randomQuote)
 	require.NoError(t, err)
 
 	params := map[string]string{

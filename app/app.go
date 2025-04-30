@@ -1,8 +1,6 @@
-package cmd
+package app
 
 import (
-	"fmt"
-
 	"github.com/go-resty/resty/v2"
 	"go.uber.org/fx"
 
@@ -82,7 +80,7 @@ func startServer(lc fx.Lifecycle, in srv) error {
 		grpc := server.NewGRPCServer(in.Cfg, in.GrpcHandlers)
 		lc.Append(fx.Hook{OnStart: grpc.Start, OnStop: grpc.Stop})
 	default:
-		return fmt.Errorf("unsupported server type: %s", in.Cfg.Type)
+		return ErrUnsupportedServerType
 	}
 
 	return nil

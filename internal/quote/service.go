@@ -94,24 +94,25 @@ func (s *Service) chooseQuote(ctx context.Context, quotes []database.Quote, rand
 	}
 
 	if (oneHundredPercent - s.cfg.RandomQuoteChance) > randomPercent {
-		likes := tools.Sum(quotes, func(quote database.Quote) float64 {
+		likesTotal := tools.Sum(quotes, func(quote database.Quote) float64 {
 			if quote.Likes == 0 {
-				quote.Likes++
+				return 1
 			}
 
 			return float64(quote.Likes)
 		})
 
 		var accumulator float64
-		del := likes * oneHundredPercent / (oneHundredPercent - s.cfg.RandomQuoteChance)
-		for i, q := range quotes {
-			if q.Likes == 0 {
-				q.Likes++
+		del := likesTotal * oneHundredPercent / (oneHundredPercent - s.cfg.RandomQuoteChance)
+		for _, q := range quotes {
+			quoteLikes := 1.0
+			if q.Likes != 0 {
+				quoteLikes = float64(q.Likes)
 			}
 
-			percent := float64(q.Likes) / del * oneHundredPercent
+			percent := quoteLikes / del * oneHundredPercent
 			if percent+accumulator >= randomPercent {
-				return quotes[i], nil
+				return q, nil
 			}
 
 			accumulator += percent

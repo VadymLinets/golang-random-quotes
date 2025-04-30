@@ -32,6 +32,7 @@ func (s *Service) GetRandomQuote(ctx context.Context) (database.Quote, error) {
 	}
 
 	quote := randomQuote.toDatabase()
+
 	err = s.db.SaveQuote(ctx, quote)
 	if err != nil {
 		return database.Quote{}, fmt.Errorf("failed to save new random quote: %w", err)
