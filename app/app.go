@@ -17,8 +17,8 @@ import (
 
 func Exec(cfg *config.Config) fx.Option {
 	return fx.Options(
+		fx.Supply(cfg),
 		fx.Provide(
-			func() *config.Config { return cfg },
 			database.NewPostgres,
 			fx.Annotate(
 				copyForAnnotation[database.Postgres],
