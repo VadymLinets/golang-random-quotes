@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"log/slog"
 
 	"quote/internal/heartbeat"
 	"quote/internal/quote"
@@ -17,9 +16,8 @@ type Handler struct {
 }
 
 func (h *Handler) Heartbeat(ctx context.Context, _ *pb.Empty) (*pb.Empty, error) {
-	err := h.heartbeat.PingDatabase(ctx)
+	err := h.heartbeat.Ping(ctx)
 	if err != nil {
-		slog.Error("Failed to ping database", "err", err)
 		return nil, err
 	}
 

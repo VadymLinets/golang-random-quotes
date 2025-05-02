@@ -23,7 +23,7 @@ func (r *mutationHandlerResolver) LikeQuoteHandler(ctx context.Context, userID s
 
 // Heartbeat is the resolver for the heartbeat field.
 func (r *queryHandlerResolver) Heartbeat(ctx context.Context) (*EmptyResult, error) {
-	err := r.HeartbeatHandler.PingDatabase(ctx)
+	err := r.HeartbeatHandler.Ping(ctx)
 	if err != nil {
 		return &EmptyResult{
 			Success: false,

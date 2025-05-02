@@ -36,7 +36,7 @@ func (s *HTTPServer) Start(_ context.Context) error {
 	)
 
 	// System
-	router.GET("/heartbeat", s.handlers.HeartBeat)
+	router.GET("/heartbeat", s.handlers.Heartbeat)
 
 	// Quotes
 	router.GET("/", s.handlers.GetQuoteHandler)

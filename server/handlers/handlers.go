@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"log/slog"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -15,10 +14,9 @@ type Handler struct {
 	heartbeat *heartbeat.Service
 }
 
-func (h *Handler) HeartBeat(c *gin.Context) {
-	err := h.heartbeat.PingDatabase(c)
+func (h *Handler) Heartbeat(c *gin.Context) {
+	err := h.heartbeat.Ping(c)
 	if err != nil {
-		slog.Error("Failed to ping database", "err", err)
 		c.Status(http.StatusInternalServerError)
 		return
 	}
