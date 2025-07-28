@@ -233,5 +233,6 @@ func newTestService(t *testing.T, cfg *config.Config) (*Service, *mocks.QuoteDat
 
 	db := mocks.NewQuoteDatabase(t)
 	api := mocks.NewQuoteAPI(t)
+
 	return NewService(cfg, db, api), db, api
 }

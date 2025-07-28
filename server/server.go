@@ -23,7 +23,7 @@ type HTTPServer struct {
 	resolver *graphql.Resolver
 }
 
-func (s *HTTPServer) Start(_ context.Context) error {
+func (s *HTTPServer) Start(ctx context.Context) error {
 	gin.SetMode(gin.ReleaseMode)
 
 	srv := handler.New(graphql.NewExecutableSchema(graphql.Config{Resolvers: s.resolver}))
@@ -54,7 +54,7 @@ func (s *HTTPServer) Start(_ context.Context) error {
 
 	go func() {
 		if err := s.server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			slog.Error("Server start error", "err", err)
+			slog.ErrorContext(ctx, "Server start error", "err", err)
 			panic(err)
 		}
 	}()

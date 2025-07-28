@@ -19,17 +19,24 @@ func Exec(cfg *config.Config) fx.Option {
 	return fx.Options(
 		fx.Supply(cfg),
 		fx.Provide(
-			database.NewPostgres,
+			// * Common
+			resty.New,
+
+			// * Repositories
 			fx.Annotate(
-				copyForAnnotation[database.Postgres],
+				database.NewPostgres,
 				fx.As(new(heartbeat.Database)),
 				fx.As(new(quote.Database)),
 				fx.As(new(quoteapi.Database)),
+				fx.As(fx.Self()),
 			),
-			resty.New,
+
+			// * Services
 			fx.Annotate(quoteapi.NewService, fx.As(new(quote.API))),
 			quote.NewService,
 			heartbeat.NewService,
+
+			// * Servers
 			newGraphQLResolver,
 			handlers.NewHandler,
 			grpcHandlers.NewHandler,
@@ -46,10 +53,6 @@ func newGraphQLResolver(quotes *quote.Service, heartbeat *heartbeat.Service) *gr
 		QuotesHandler:    quotes,
 		HeartbeatHandler: heartbeat,
 	}
-}
-
-func copyForAnnotation[T any](v *T) *T {
-	return v
 }
 
 type hooks struct {

@@ -26,6 +26,7 @@ func (s *Service) GetRandomQuote(ctx context.Context) (database.Quote, error) {
 	}
 
 	var randomQuote RandomQuote
+
 	err = json.Unmarshal(resp.Body(), &randomQuote)
 	if err != nil {
 		return database.Quote{}, fmt.Errorf("failed to unmarshal random quote: %w", err)

@@ -30,11 +30,11 @@ func LoggerMiddleware() gin.HandlerFunc {
 		duration := time.Since(start).Seconds()
 		sep := " | "
 
-		slog.Info(
-			"| " + c.Request.Method + sep +
-				strings.Split(c.Request.RequestURI, "?")[0] + sep +
-				cast.ToString(c.Writer.Status()) + sep +
-				cast.ToString(duration) + "s",
+		slog.InfoContext(c,
+			"| "+c.Request.Method+sep+
+				strings.Split(c.Request.RequestURI, "?")[0]+sep+
+				cast.ToString(c.Writer.Status())+sep+
+				cast.ToString(duration)+"s",
 		)
 	}
 }

@@ -102,8 +102,9 @@ func (s *Service) chooseQuote(ctx context.Context, quotes []database.Quote, rand
 			return float64(quote.Likes)
 		})
 
-		var accumulator float64
+		accumulator := 0.0
 		del := likesTotal * oneHundredPercent / (oneHundredPercent - s.cfg.RandomQuoteChance)
+
 		for _, q := range quotes {
 			quoteLikes := 1.0
 			if q.Likes != 0 {

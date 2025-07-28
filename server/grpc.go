@@ -20,9 +20,10 @@ type GRPCServer struct {
 	quotesHandler pb.QuotesServer
 }
 
-func (s *GRPCServer) Start(_ context.Context) error {
+func (s *GRPCServer) Start(ctx context.Context) error {
 	var err error
-	s.listener, err = net.Listen("tcp", s.cfg.Addr)
+
+	s.listener, err = net.Listen("tcp", s.cfg.Addr) //nolint:noctx
 	if err != nil {
 		return err
 	}
@@ -31,9 +32,10 @@ func (s *GRPCServer) Start(_ context.Context) error {
 	pb.RegisterQuotesServer(s.server, s.quotesHandler)
 
 	reflection.Register(s.server)
+
 	go func() {
 		if err := s.server.Serve(s.listener); err != nil {
-			slog.Error("Server start error", "err", err)
+			slog.ErrorContext(ctx, "Server start error", "err", err)
 			panic(err)
 		}
 	}()

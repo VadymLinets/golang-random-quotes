@@ -41,5 +41,6 @@ func newTestService(t *testing.T) (*Service, *mocks.QuoteapiDatabase) {
 	t.Cleanup(httpmock.Deactivate)
 
 	db := mocks.NewQuoteapiDatabase(t)
+
 	return NewService(db, client), db
 }

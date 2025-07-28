@@ -33,6 +33,7 @@ linters:
     - musttag
     - nilnil
     - nlreturn
+    - noinlineerr
     - nonamedreturns
     - paralleltest
     - perfsprint

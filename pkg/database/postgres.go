@@ -33,6 +33,7 @@ func (p *Postgres) GetQuote(ctx context.Context, quoteID string) (quote Quote, e
 		Select("*").
 		Where("quotes.id = ?", quoteID).
 		First(&quote).Error
+
 	return
 }
 
@@ -49,6 +50,7 @@ func (p *Postgres) GetQuotes(ctx context.Context, userID string) (quotes []Quote
 		Where("quotes.id NOT IN (?)", viewed).
 		Order("quotes.likes DESC").
 		Find(&quotes).Error
+
 	return
 }
 
@@ -72,6 +74,7 @@ func (p *Postgres) GetSameQuote(ctx context.Context, userID string, viewedQuote 
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		err = ErrRecordNotFound
 	}
+
 	return
 }
 
@@ -80,6 +83,7 @@ func (p *Postgres) GetView(ctx context.Context, userID, quoteID string) (view Vi
 		WithContext(ctx).
 		Where("user_id = ? AND quote_id = ?", userID, quoteID).
 		First(&view).Error
+
 	return
 }
 
@@ -126,6 +130,7 @@ func (p *Postgres) Start(_ context.Context) (err error) {
 	}
 
 	err = goose.Up(db, p.cfg.MigrationPath, goose.WithAllowMissing())
+
 	return
 }
 

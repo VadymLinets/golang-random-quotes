@@ -39,7 +39,7 @@ type QuotesConfig struct {
 func Get() (*Config, error) {
 	_ = godotenv.Load()
 
-	cfg := new(Config)
-	err := env.Parse(cfg)
-	return cfg, err
+	cfg, err := env.ParseAs[Config]()
+
+	return &cfg, err
 }

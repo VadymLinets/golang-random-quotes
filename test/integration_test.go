@@ -14,6 +14,8 @@ import (
 	"quote/config"
 	"quote/internal/quote"
 	"quote/pkg/database"
+	"quote/test/common"
+	"quote/test/docker"
 )
 
 var (
@@ -31,15 +33,19 @@ func TestIntegration(t *testing.T) {
 		t.Skip("Skipping integration testing for mutation tests")
 	}
 
-	client := resty.New()
-	cfg, db := runEssentials(t)
+	postgresConfig := docker.StartPostgres(t)
+	cfg := common.GetConfig(t, postgresConfig)
+	db := common.PostgresClient(t, cfg)
+	common.RunApp(t, cfg)
+
+	httpClient := resty.New()
 
 	err := db.SaveQuote(t.Context(), testQuote)
 	require.NoError(t, err)
 
-	getQuote(t, cfg, client, db)
-	likeQuote(t, cfg, client, db)
-	getSameQuote(t, cfg, client, db)
+	getQuote(t, cfg, httpClient, db)
+	likeQuote(t, cfg, httpClient, db)
+	getSameQuote(t, cfg, httpClient, db)
 }
 
 func getQuote(t *testing.T, cfg *config.Config, client *resty.Client, db *database.Postgres) {
@@ -54,8 +60,10 @@ func getQuote(t *testing.T, cfg *config.Config, client *resty.Client, db *databa
 	require.Equal(t, http.StatusOK, resp.StatusCode())
 
 	var q quote.Quote
+
 	err = json.Unmarshal(resp.Body(), &q)
 	require.NoError(t, err)
+
 	require.Equal(t, quote.Quote{
 		ID:     testQuote.ID,
 		Quote:  testQuote.Quote,
@@ -118,8 +126,10 @@ func getSameQuote(t *testing.T, cfg *config.Config, client *resty.Client, db *da
 	require.Equal(t, http.StatusOK, resp.StatusCode())
 
 	var q quote.Quote
+
 	err = json.Unmarshal(resp.Body(), &q)
 	require.NoError(t, err)
+
 	require.Equal(t, quote.Quote{
 		ID:     sameQuote.ID,
 		Quote:  sameQuote.Quote,
