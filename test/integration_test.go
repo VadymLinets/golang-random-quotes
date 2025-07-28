@@ -29,8 +29,11 @@ var (
 )
 
 func TestIntegration(t *testing.T) {
-	if os.Getenv("MUTATION_TESTING") != "" {
+	switch {
+	case os.Getenv("MUTATION_TESTING") != "":
 		t.Skip("Skipping integration testing for mutation tests")
+	case os.Getenv("RUNS_IN_CI") == "true":
+		t.Skip("Skipping integration testing for CI")
 	}
 
 	postgresConfig := docker.StartPostgres(t)
